@@ -1,0 +1,2043 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>每日一小步｜任務地圖 Demo</title>
+  <script>
+    window.DAILY_MISSION_CONFIG = {
+      GOOGLE_CLIENT_ID: "PASTE_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+      GAS_WEB_APP_URL: "PASTE_APPS_SCRIPT_WEB_APP_URL"
+    };
+  </script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --surface: #ffffff;
+      --surface-2: #f0f4f8;
+      --surface-3: #e9edf5;
+      --ink: #17202f;
+      --ink-2: #526071;
+      --ink-3: #7a8796;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --green: #159a6a;
+      --green-soft: #dcfce7;
+      --amber: #c87900;
+      --amber-soft: #fef3c7;
+      --coral: #e65f46;
+      --coral-soft: #ffe4dc;
+      --violet: #7557d8;
+      --violet-soft: #ede9fe;
+      --line: #dce3ec;
+      --shadow: 0 18px 44px rgba(24, 39, 75, .10);
+      --shadow-soft: 0 8px 22px rgba(24, 39, 75, .08);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-pill: 999px;
+      --max: 1180px;
+      --font: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, #f9fbff 0%, var(--bg) 44%, #eef3f8 100%);
+      color: var(--ink);
+      font-family: var(--font);
+      letter-spacing: 0;
+    }
+
+    button, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 28px 22px 44px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 17px;
+      display: grid;
+      place-items: center;
+      color: var(--blue);
+      background: linear-gradient(135deg, #ffffff 0%, var(--blue-soft) 100%);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .brand-mark svg,
+    .icon svg,
+    .nav-icon svg,
+    .badge-icon svg,
+    .empty-art svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand-title {
+      min-width: 0;
+    }
+
+    .brand-title strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    .brand-title span {
+      display: block;
+      margin-top: 3px;
+      color: var(--ink-2);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .mini-stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, .82);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 850;
+      box-shadow: 0 2px 10px rgba(24, 39, 75, .04);
+      white-space: nowrap;
+    }
+
+    .auth-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border: 1px solid rgba(220, 227, 236, .92);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .84);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .auth-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 950;
+      line-height: 1.35;
+    }
+
+    .auth-title .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 0 5px var(--amber-soft);
+      flex: 0 0 auto;
+    }
+
+    .auth-title .dot.is-ready {
+      background: var(--green);
+      box-shadow: 0 0 0 5px var(--green-soft);
+    }
+
+    .auth-sub {
+      margin-top: 4px;
+      color: var(--ink-2);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .auth-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    #googleSignIn {
+      min-width: 190px;
+    }
+
+    .small-btn {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-pill);
+      background: var(--surface);
+      color: var(--ink-2);
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .mini-stat span {
+      color: var(--blue);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      align-items: stretch;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .hero-main {
+      position: relative;
+      overflow: hidden;
+      padding: 30px;
+      border-radius: 32px;
+      background:
+        linear-gradient(135deg, #ffffff 0%, #eff6ff 48%, #edfdf6 100%);
+      box-shadow: var(--shadow);
+      min-height: 230px;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      left: 30px;
+      right: 30px;
+      bottom: 24px;
+      height: 6px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(90deg, var(--blue) 0 64%, var(--green) 64% 82%, var(--line) 82% 100%);
+      opacity: .18;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      max-width: 640px;
+      margin: 0;
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 1.04;
+      font-weight: 950;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 560px;
+      margin: 14px 0 0;
+      color: var(--ink-2);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .hero-visual {
+      min-height: 230px;
+      padding: 22px;
+      border-radius: 32px;
+      background: linear-gradient(135deg, #17202f 0%, #24344f 100%);
+      color: #ffffff;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 26px;
+      pointer-events: none;
+    }
+
+    .hero-status {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      min-height: 186px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .hero-status-top,
+    .hero-status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .hero-status-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .hero-status-top span,
+    .hero-status-grid span {
+      color: rgba(255, 255, 255, .66);
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .hero-status-top strong {
+      padding: 8px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, .12);
+      font-size: 13px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .hero-status h2 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.15;
+      font-weight: 950;
+      letter-spacing: 0;
+    }
+
+    .hero-status p {
+      margin: 8px 0 0;
+      color: rgba(255, 255, 255, .74);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .hero-meter {
+      height: 12px;
+      overflow: hidden;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, .14);
+    }
+
+    .hero-meter span {
+      display: block;
+      width: 8%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #60a5fa, #86efac);
+    }
+
+    .hero-status-grid div {
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .08);
+    }
+
+    .hero-status-grid strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 20px;
+      line-height: 1;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr) 300px;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .left-column,
+    .center-column,
+    .right-column {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .stretch-panel {
+      flex: 1;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, .92);
+      border: 1px solid rgba(220, 227, 236, .88);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+
+    .panel-pad {
+      padding: 20px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.25;
+      font-weight: 950;
+    }
+
+    .section-title p {
+      margin: 4px 0 0;
+      color: var(--ink-2);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--surface-2);
+      color: var(--ink-2);
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .pill.blue { background: var(--blue-soft); color: var(--blue); }
+    .pill.green { background: var(--green-soft); color: var(--green); }
+    .pill.amber { background: var(--amber-soft); color: var(--amber); }
+
+    .side-nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border: 0;
+      border-radius: 18px;
+      background: transparent;
+      color: var(--ink-2);
+      text-align: left;
+      font-weight: 850;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.is-active {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .nav-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: rgba(255, 255, 255, .72);
+      flex: 0 0 auto;
+    }
+
+    .player-card {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--ink) 0%, #26364f 100%);
+      color: #fff;
+    }
+
+    .player-card strong {
+      display: block;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .player-card span {
+      display: block;
+      margin-top: 5px;
+      color: rgba(255, 255, 255, .72);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .energy-track {
+      height: 10px;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, .18);
+    }
+
+    .energy-fill {
+      display: block;
+      height: 100%;
+      width: 64%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #67e8f9, #86efac);
+      transition: width .32s ease;
+    }
+
+    .mission-map {
+      display: grid;
+      gap: 10px;
+      max-height: 466px;
+      overflow-y: auto;
+      padding-right: 6px;
+      scrollbar-width: thin;
+      scrollbar-color: #bfd0e6 transparent;
+      overscroll-behavior: contain;
+    }
+
+    .mission-map::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .mission-map::-webkit-scrollbar-thumb {
+      border-radius: var(--radius-pill);
+      background: #bfd0e6;
+    }
+
+    .map-day {
+      position: relative;
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+    }
+
+    .map-day::before {
+      content: "";
+      position: absolute;
+      left: 35px;
+      top: -14px;
+      width: 4px;
+      height: 14px;
+      background: var(--line);
+    }
+
+    .map-day:first-child::before {
+      display: none;
+    }
+
+    .day-node {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 17px;
+      background: var(--surface-3);
+      color: var(--ink-2);
+      font-size: 13px;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .map-day.done .day-node {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .map-day.today {
+      border-color: rgba(37, 99, 235, .35);
+      background: linear-gradient(135deg, #ffffff, #eff6ff);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, .10);
+    }
+
+    .map-day.today .day-node {
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, .22);
+    }
+
+    .day-info {
+      min-width: 0;
+    }
+
+    .day-info strong {
+      display: block;
+      overflow: hidden;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.3;
+      font-weight: 900;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .day-info span {
+      display: block;
+      margin-top: 4px;
+      color: var(--ink-3);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .day-reward {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .quest-card {
+      padding: 24px;
+    }
+
+    .quest-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .quest-title {
+      margin: 0;
+      font-size: clamp(25px, 3vw, 36px);
+      line-height: 1.12;
+      font-weight: 950;
+    }
+
+    .quest-copy {
+      margin: 10px 0 0;
+      color: var(--ink-2);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .level-badge {
+      flex: 0 0 auto;
+      width: 76px;
+      height: 76px;
+      display: grid;
+      place-items: center;
+      border-radius: 26px;
+      background: linear-gradient(135deg, var(--blue), var(--violet));
+      color: #fff;
+      box-shadow: 0 14px 26px rgba(37, 99, 235, .22);
+      text-align: center;
+      font-weight: 950;
+      line-height: 1.05;
+    }
+
+    .level-badge small {
+      display: block;
+      opacity: .78;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .quest-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      padding: 14px;
+      border-radius: 18px;
+      background: var(--surface-2);
+      min-width: 0;
+    }
+
+    .stat-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-card span {
+      display: block;
+      margin-top: 7px;
+      color: var(--ink-2);
+      font-size: 12px;
+      line-height: 1.25;
+      font-weight: 850;
+    }
+
+    .task-card {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #f8fbff 0%, #edf6ff 100%);
+      border: 1px solid rgba(37, 99, 235, .12);
+      margin-bottom: 16px;
+    }
+
+    .task-symbol {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      border-radius: 26px;
+      background: #fff;
+      color: var(--blue);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .task-symbol svg {
+      width: 36px;
+      height: 36px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .task-card h3 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 22px;
+      line-height: 1.25;
+      font-weight: 950;
+    }
+
+    .task-card p {
+      margin: 8px 0 0;
+      color: var(--ink-2);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .checkin-grid {
+      display: grid;
+      grid-template-columns: .92fr 1.08fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .upload-card {
+      min-height: 174px;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      border: 2px dashed #c9d7e8;
+      border-radius: 24px;
+      background: #fbfdff;
+      color: var(--ink-2);
+      text-align: center;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .upload-card:hover,
+    .upload-card.has-photo {
+      transform: translateY(-1px);
+      border-color: var(--blue);
+      background: #f8fbff;
+    }
+
+    .upload-card svg {
+      width: 42px;
+      height: 42px;
+      margin-bottom: 10px;
+      color: var(--blue);
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .upload-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 950;
+    }
+
+    .upload-card span {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .upload-preview {
+      width: min(100%, 220px);
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: none;
+      margin: 0 auto 12px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+    }
+
+    .upload-card.has-photo .upload-preview {
+      display: block;
+    }
+
+    .upload-card.has-photo svg {
+      display: none;
+    }
+
+    .reflection {
+      width: 100%;
+      min-height: 174px;
+      resize: none;
+      border: 1px solid var(--line);
+      outline: none;
+      border-radius: 24px;
+      background: #fff;
+      color: var(--ink);
+      padding: 18px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .primary-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: var(--radius-pill);
+      border: 0;
+      padding: 13px 20px;
+      font-size: 15px;
+      font-weight: 950;
+      transition: transform .16s ease, background-color .16s ease, box-shadow .16s ease;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, .18);
+    }
+
+    .btn-primary:hover {
+      background: #1e4fd3;
+    }
+
+    .btn-secondary {
+      background: var(--surface-2);
+      color: var(--ink);
+    }
+
+    .btn-primary:active,
+    .btn-secondary:active,
+    .nav-btn:active,
+    .bottom-tab:active {
+      transform: scale(.97);
+    }
+
+    .coach-card {
+      display: none;
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ffffff, #edfff6);
+      border: 1px solid rgba(21, 154, 106, .20);
+    }
+
+    .coach-card.is-visible {
+      display: block;
+    }
+
+    .coach-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .coach-card h3 {
+      margin: 0 0 6px;
+      color: var(--ink);
+      font-size: 19px;
+      line-height: 1.3;
+      font-weight: 950;
+    }
+
+    .coach-card p {
+      margin: 0;
+      color: var(--ink-2);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .score-ring {
+      flex: 0 0 auto;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle, #fff 0 54%, transparent 55%),
+        conic-gradient(var(--green) 0 92%, var(--line) 92% 100%);
+      color: var(--green);
+      font-size: 20px;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .reward-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .reward {
+      padding: 12px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .reward strong {
+      display: block;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .reward span {
+      display: block;
+      margin-top: 6px;
+      color: var(--ink-2);
+      font-size: 12px;
+      line-height: 1.25;
+      font-weight: 850;
+    }
+
+    .leader-list,
+    .badge-grid,
+    .history-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .leader-row {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 18px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+
+    .rank {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .leader-row strong,
+    .history-item strong {
+      display: block;
+      overflow: hidden;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.3;
+      font-weight: 950;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .leader-row span,
+    .history-item span {
+      display: block;
+      margin-top: 4px;
+      color: var(--ink-2);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .leader-score {
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .badge-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .badge-card {
+      min-height: 98px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 7px;
+      padding: 12px 8px;
+      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .badge-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .badge-card:nth-child(2) .badge-icon {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .badge-card:nth-child(3) .badge-icon {
+      color: var(--amber);
+      background: var(--amber-soft);
+    }
+
+    .badge-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 950;
+    }
+
+    .book-card {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, var(--ink) 0%, #26364f 100%);
+      color: #fff;
+    }
+
+    .book-card strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1.25;
+      font-weight: 950;
+    }
+
+    .book-card p {
+      margin: 9px 0 14px;
+      color: rgba(255, 255, 255, .78);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .book-progress {
+      height: 9px;
+      overflow: hidden;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, .16);
+    }
+
+    .book-progress span {
+      display: block;
+      width: 7%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #93c5fd, #86efac);
+    }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 18px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+
+    .history-dot {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 9px;
+      border-radius: var(--radius-pill);
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .empty-art {
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+      padding: 16px;
+      border-radius: 22px;
+      background: var(--violet-soft);
+      color: var(--violet);
+      margin-top: 16px;
+    }
+
+    .empty-art .art-box {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      background: #fff;
+    }
+
+    .empty-art strong {
+      display: block;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .empty-art span {
+      display: block;
+      margin-top: 4px;
+      color: var(--ink-2);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .mobile-bottom-nav {
+      display: none;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 50;
+      display: none;
+      width: min(420px, calc(100vw - 32px));
+      transform: translateX(-50%);
+      padding: 13px 16px;
+      border-radius: 18px;
+      background: rgba(23, 32, 47, .95);
+      color: #fff;
+      box-shadow: var(--shadow);
+      font-size: 14px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .toast.is-visible {
+      display: block;
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .app-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .left-column,
+      .right-column {
+        display: contents;
+      }
+
+      .side-nav {
+        display: none;
+      }
+
+      .player-card {
+        display: none;
+      }
+
+      .quest-stats,
+      .checkin-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        background: var(--bg);
+      }
+
+      .app {
+        padding: 18px 14px 108px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .brand-title span {
+        display: none;
+      }
+
+      .top-actions .mini-stat:nth-child(2) {
+        display: none;
+      }
+
+      .auth-card {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-actions {
+        justify-content: flex-start;
+      }
+
+      .hero {
+        gap: 14px;
+      }
+
+      .hero-main,
+      .hero-visual {
+        border-radius: 28px;
+        min-height: auto;
+      }
+
+      .hero-main {
+        padding: 24px;
+      }
+
+      .hero-main::after {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .hero p {
+        font-size: 15px;
+      }
+
+      .hero-visual {
+        min-height: 210px;
+      }
+
+      .panel {
+        border-radius: 24px;
+      }
+
+      .panel-pad,
+      .quest-card {
+        padding: 18px;
+      }
+
+      .quest-header {
+        display: block;
+      }
+
+      .level-badge {
+        margin-top: 14px;
+        width: auto;
+        height: auto;
+        min-height: 52px;
+        display: inline-grid;
+        grid-auto-flow: column;
+        gap: 8px;
+        padding: 12px 16px;
+        border-radius: var(--radius-pill);
+      }
+
+      .quest-stats,
+      .checkin-grid,
+      .reward-row {
+        grid-template-columns: 1fr;
+      }
+
+      .task-card {
+        grid-template-columns: 1fr;
+      }
+
+      .badge-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .mobile-bottom-nav {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        z-index: 30;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        padding: 8px;
+        border: 1px solid rgba(220, 227, 236, .9);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, .94);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+      }
+
+      .bottom-tab {
+        min-height: 52px;
+        display: grid;
+        place-items: center;
+        gap: 2px;
+        border: 0;
+        border-radius: 18px;
+        background: transparent;
+        color: var(--ink-3);
+        font-size: 11px;
+        font-weight: 950;
+      }
+
+      .bottom-tab svg {
+        width: 22px;
+        height: 22px;
+        stroke: currentColor;
+        stroke-width: 2.2;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .bottom-tab.is-active {
+        background: var(--blue-soft);
+        color: var(--blue);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path><path d="M7.5 7.5 16.5 16.5"></path><path d="M16.5 7.5 7.5 16.5"></path></svg>
+        </div>
+        <div class="brand-title">
+          <strong>每日一小步</strong>
+          <span>小任務打卡、AI 回饋、成長作品集</span>
+        </div>
+      </div>
+      <div class="top-actions" aria-label="今日狀態">
+        <div class="mini-stat">連續 <span id="streakMini">8</span> 天</div>
+        <div class="mini-stat">能量 <span id="energyMini">64</span>%</div>
+      </div>
+    </header>
+
+    <section class="auth-card" aria-label="Google 登入與後台同步">
+      <div>
+        <div class="auth-title">
+          <span class="dot" id="syncDot"></span>
+          <span id="authTitle">尚未連接 Google 後台</span>
+        </div>
+        <div class="auth-sub" id="authSub">前台已可放 GitHub Pages；填入 Google client id 與 GAS URL 後，資料會寫進你的 Google Sheets / Drive。</div>
+      </div>
+      <div class="auth-actions">
+        <div id="googleSignIn"></div>
+        <button class="small-btn" type="button" id="signOutBtn" hidden>登出</button>
+        <button class="small-btn" type="button" id="syncBtn">同步榜單</button>
+      </div>
+    </section>
+
+    <section class="hero" id="overview">
+      <div class="hero-main">
+        <div class="kicker">今日冒險已開放</div>
+        <h1>把真實生活，變成每天都能完成的小任務。</h1>
+        <p>不是逼孩子立刻找到夢想，而是用小到做得到的行動，累積成就感、照片證據、AI 教練回饋，最後整理成一本看得見的成長小書。</p>
+      </div>
+      <div class="hero-visual" aria-label="365 天任務進度">
+        <div class="hero-status">
+          <div class="hero-status-top">
+            <span>365 天任務卷軸</span>
+            <strong>Day 8 / 365</strong>
+          </div>
+          <div>
+            <h2>每天只解鎖一個很小的現實任務。</h2>
+            <p>Rick 試用版會先看見前端體驗：任務可上下滾動、照片可選擇或拍攝，完成後會留下作品集感。</p>
+          </div>
+          <div class="hero-meter" aria-label="年度任務進度 8 / 365"><span></span></div>
+          <div class="hero-status-grid">
+            <div><strong>365</strong><span>全年任務</span></div>
+            <div><strong>8</strong><span>目前進度</span></div>
+            <div><strong>120</strong><span>成書門檻</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="app-grid">
+      <aside class="left-column">
+        <section class="panel panel-pad">
+          <nav class="side-nav" aria-label="主要區塊">
+            <button class="nav-btn is-active" type="button" data-jump="overview">
+              <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7"></path><path d="M6 10v10h12V10"></path></svg></span>
+              <span>今日總覽</span>
+            </button>
+            <button class="nav-btn" type="button" data-jump="map">
+              <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 19c4-8 10-8 14 0"></path><path d="M6 7h.01M12 4h.01M18 7h.01"></path></svg></span>
+              <span>任務地圖</span>
+            </button>
+            <button class="nav-btn" type="button" data-jump="checkin">
+              <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-5"></path><path d="M4 5h16v14H4z"></path></svg></span>
+              <span>我要打卡</span>
+            </button>
+            <button class="nav-btn" type="button" data-jump="rankings">
+              <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"></path><path d="M5 6H3v2a4 4 0 0 0 4 4M19 6h2v2a4 4 0 0 1-4 4"></path></svg></span>
+              <span>排行榜</span>
+            </button>
+          </nav>
+          <div class="player-card">
+            <strong>今日節奏</strong>
+            <span>完成一個任務就好。系統會把你的照片與反思收進成長歷程。</span>
+            <div class="energy-track" aria-label="能量 64%">
+              <span class="energy-fill" id="energyFill"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel-pad stretch-panel" id="map">
+          <div class="section-title">
+            <div>
+              <h2>任務地圖</h2>
+              <p>365 天每天一格，可上下滾動查看全年路線。</p>
+            </div>
+            <span class="pill blue">365 天</span>
+          </div>
+
+          <div class="mission-map" id="missionMap" aria-label="365 天任務列表"></div>
+        </section>
+      </aside>
+
+      <section class="center-column">
+        <article class="panel quest-card" id="checkin">
+          <div class="quest-header">
+            <div>
+              <div class="kicker">今日任務</div>
+              <h2 class="quest-title">喝一杯水，拍下你的杯子</h2>
+              <p class="quest-copy">任務很小，但它訓練的是「開始、完成、留下證據」。完成後 AI 只會評估行動證據，不評價這個人好不好。</p>
+            </div>
+            <div class="level-badge"><small>LEVEL</small>3</div>
+          </div>
+
+          <div class="quest-stats" aria-label="今日數據">
+            <div class="stat-card"><strong id="checkinCount">239</strong><span>已打卡</span></div>
+            <div class="stat-card"><strong id="xpCount">162</strong><span>成長積分</span></div>
+            <div class="stat-card"><strong id="energyCount">64</strong><span>能量值</span></div>
+            <div class="stat-card"><strong>27%</strong><span>小書進度</span></div>
+          </div>
+
+          <div class="task-card">
+            <div class="task-symbol" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M8 4h8l-1 5H9L8 4Z"></path><path d="M9 9h6l1 10H8L9 9Z"></path><path d="M10 13h4"></path></svg>
+            </div>
+            <div>
+              <h3>完成條件</h3>
+              <p>照片中看得到水杯或水壺，再寫一句喝完水後的感覺。滿分不是重點，願意完成才是核心。</p>
+            </div>
+          </div>
+
+          <div class="checkin-grid">
+            <label class="upload-card" id="uploadCard" for="photoInput">
+              <div>
+                <img class="upload-preview" id="photoPreview" alt="打卡照片預覽">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17V7a2 2 0 0 1 2-2h3l2 3h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path><path d="m8 15 3-3 2 2 2-3 3 4"></path></svg>
+                <strong id="photoTitle">加入完成照片</strong>
+                <span id="photoHint">手機可直接拍照，電腦可選擇圖片；送出後會存到站主 Google Drive。</span>
+                <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
+              </div>
+            </label>
+            <textarea class="reflection" id="reflection">我下午比較有精神，也發現自己其實可以把小事做完。</textarea>
+          </div>
+
+          <div class="primary-actions">
+            <button class="btn-primary" id="completeBtn" type="button">完成今日冒險</button>
+            <button class="btn-secondary" type="button" data-jump="map">看任務地圖</button>
+          </div>
+
+          <div class="coach-card" id="coachCard" aria-live="polite">
+            <div class="coach-top">
+              <div>
+                <h3>AI 教練回饋</h3>
+                <p>你有完成照片、具體行動和一句反思。今天的目標不是追求完美，而是把一件小事完整收尾。</p>
+              </div>
+              <div class="score-ring">92</div>
+            </div>
+            <div class="reward-row">
+              <div class="reward"><strong>+20</strong><span>能量</span></div>
+              <div class="reward"><strong>+30</strong><span>成長積分</span></div>
+              <div class="reward"><strong>D9</strong><span>明日解鎖</span></div>
+            </div>
+          </div>
+        </article>
+
+        <section class="panel panel-pad stretch-panel" id="progress">
+          <div class="section-title">
+            <div>
+              <h2>我的歷程</h2>
+              <p>這些紀錄未來可以整理成一本小書。</p>
+            </div>
+            <span class="pill green">8 天</span>
+          </div>
+          <div class="history-list">
+            <article class="history-item">
+              <div class="history-dot">D8</div>
+              <div><strong>喝一杯水並拍照</strong><span id="historyState">尚未完成今日打卡</span></div>
+              <span class="status-tag" id="historyTag">待完成</span>
+            </article>
+            <article class="history-item">
+              <div class="history-dot">D7</div>
+              <div><strong>對一個人說謝謝</strong><span>已完成，AI 回饋 90 分</span></div>
+              <span class="status-tag">完成</span>
+            </article>
+            <article class="history-item">
+              <div class="history-dot">D6</div>
+              <div><strong>整理桌面 3 分鐘</strong><span>已完成，AI 回饋 88 分</span></div>
+              <span class="status-tag">完成</span>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <aside class="right-column">
+        <section class="panel panel-pad" id="rankings">
+          <div class="section-title">
+            <div>
+              <h2>排行榜</h2>
+              <p>先看任務內完成度，不做全站壓力榜。</p>
+            </div>
+            <span class="pill amber">新手榜</span>
+          </div>
+          <div class="leader-list">
+            <article class="leader-row">
+              <div class="rank">1</div>
+              <div><strong>小可</strong><span>連續 8 天，反思完整</span></div>
+              <div class="leader-score">92</div>
+            </article>
+            <article class="leader-row">
+              <div class="rank">2</div>
+              <div><strong>阿晨</strong><span>照片清楚，完成穩定</span></div>
+              <div class="leader-score">88</div>
+            </article>
+            <article class="leader-row">
+              <div class="rank">3</div>
+              <div><strong>小宇</strong><span>今天第一次加入</span></div>
+              <div class="leader-score">84</div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel panel-pad stretch-panel">
+          <div class="section-title">
+            <div>
+              <h2>徽章</h2>
+              <p>獎勵的是持續，不是誰最厲害。</p>
+            </div>
+          </div>
+          <div class="badge-grid">
+            <article class="badge-card">
+              <div class="badge-icon"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.3 6.8 19l1-5.8L3.6 9.1l5.8-.8L12 3Z"></path></svg></div>
+              <strong>開始者</strong>
+            </article>
+            <article class="badge-card">
+              <div class="badge-icon"><svg viewBox="0 0 24 24"><path d="M12 20V4"></path><path d="M5 11l7-7 7 7"></path><path d="M5 20h14"></path></svg></div>
+              <strong>連續 7 天</strong>
+            </article>
+            <article class="badge-card">
+              <div class="badge-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-1.5Z"></path><path d="M8 7h6M8 11h5"></path></svg></div>
+              <strong>小書種子</strong>
+            </article>
+          </div>
+
+          <div class="book-card">
+            <strong>解鎖成長小書</strong>
+            <p>不是 30 天就能出書。需完成 120 天任務、90 次有效照片打卡、30 篇深度反思，才開放 AI 整理成書。</p>
+            <div class="book-progress" aria-label="小書進度 7%"><span></span></div>
+          </div>
+
+          <div class="empty-art">
+            <div class="art-box"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></div>
+            <div><strong>商業模式藏在高品質歷程裡</strong><span>免費養成習慣；達標後才解鎖作品整理、顧問諮詢或出書服務。</span></div>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <nav class="mobile-bottom-nav" aria-label="手機導覽">
+    <button class="bottom-tab is-active" type="button" data-jump="overview">
+      <svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7"></path><path d="M6 10v10h12V10"></path></svg>
+      <span>首頁</span>
+    </button>
+    <button class="bottom-tab" type="button" data-jump="map">
+      <svg viewBox="0 0 24 24"><path d="M5 19c4-8 10-8 14 0"></path><path d="M6 7h.01M12 4h.01M18 7h.01"></path></svg>
+      <span>地圖</span>
+    </button>
+    <button class="bottom-tab" type="button" data-jump="checkin">
+      <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-5"></path><path d="M4 5h16v14H4z"></path></svg>
+      <span>打卡</span>
+    </button>
+    <button class="bottom-tab" type="button" data-jump="rankings">
+      <svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"></path><path d="M5 6H3v2a4 4 0 0 0 4 4M19 6h2v2a4 4 0 0 1-4 4"></path></svg>
+      <span>榜單</span>
+    </button>
+  </nav>
+
+  <form id="gasPostForm" method="post" target="gasPostFrame" hidden>
+    <input type="hidden" name="action" id="gasAction">
+    <input type="hidden" name="credential" id="gasCredential">
+    <input type="hidden" name="payload" id="gasPayload">
+  </form>
+  <iframe name="gasPostFrame" id="gasPostFrame" title="GAS submission frame" hidden></iframe>
+
+  <div class="toast" id="toast">已完成今日冒險</div>
+
+  <script>
+    const config = window.DAILY_MISSION_CONFIG || {};
+    const hasGoogleConfig = config.GOOGLE_CLIENT_ID && !config.GOOGLE_CLIENT_ID.includes("PASTE_");
+    const hasGasConfig = config.GAS_WEB_APP_URL && !config.GAS_WEB_APP_URL.includes("PASTE_");
+    const jumpButtons = Array.from(document.querySelectorAll("[data-jump]"));
+    const navButtons = Array.from(document.querySelectorAll(".nav-btn, .bottom-tab"));
+    const completeBtn = document.getElementById("completeBtn");
+    const coachCard = document.getElementById("coachCard");
+    const energyFill = document.getElementById("energyFill");
+    const energyMini = document.getElementById("energyMini");
+    const energyCount = document.getElementById("energyCount");
+    const xpCount = document.getElementById("xpCount");
+    const checkinCount = document.getElementById("checkinCount");
+    const missionMap = document.getElementById("missionMap");
+    let todayMapNode = null;
+    let todayMapState = null;
+    const historyState = document.getElementById("historyState");
+    const historyTag = document.getElementById("historyTag");
+    const toast = document.getElementById("toast");
+    const authTitle = document.getElementById("authTitle");
+    const authSub = document.getElementById("authSub");
+    const syncDot = document.getElementById("syncDot");
+    const googleSignIn = document.getElementById("googleSignIn");
+    const signOutBtn = document.getElementById("signOutBtn");
+    const syncBtn = document.getElementById("syncBtn");
+    const uploadCard = document.getElementById("uploadCard");
+    const photoInput = document.getElementById("photoInput");
+    const photoPreview = document.getElementById("photoPreview");
+    const photoTitle = document.getElementById("photoTitle");
+    const photoHint = document.getElementById("photoHint");
+    const gasPostForm = document.getElementById("gasPostForm");
+    const gasAction = document.getElementById("gasAction");
+    const gasCredential = document.getElementById("gasCredential");
+    const gasPayload = document.getElementById("gasPayload");
+    let googleCredential = window.sessionStorage.getItem("dailyMissionCredential") || "";
+    let currentUser = readStoredUser();
+    let selectedPhoto = null;
+
+    const missionSeeds = [
+      ["寫下一件今天做得到的小事", 15],
+      ["整理桌面 3 分鐘", 18],
+      ["對一個人說謝謝", 15],
+      ["喝一杯水，拍下你的杯子", 20],
+      ["問 AI 一個好問題", 20],
+      ["走到戶外觀察一個自然現象", 22],
+      ["把今天最卡的一件事寫成一句話", 18],
+      ["做 10 次深呼吸並記錄感覺", 16],
+      ["讀一小段文字，圈出一個關鍵字", 20],
+      ["幫家裡或班上一個小忙", 18],
+      ["拍下一個讓你覺得有秩序的畫面", 22],
+      ["把一個大目標拆成下一個小動作", 24]
+    ];
+
+    function missionForDay(day) {
+      const seed = missionSeeds[(day - 1) % missionSeeds.length];
+      const stage = Math.floor((day - 1) / 30) + 1;
+      return {
+        title: seed[0],
+        reward: seed[1] + Math.min(stage - 1, 6),
+        stage
+      };
+    }
+
+    function renderMissionMap() {
+      const fragment = document.createDocumentFragment();
+      for (let day = 1; day <= 365; day += 1) {
+        const mission = missionForDay(day);
+        const item = document.createElement("article");
+        item.className = "map-day";
+        item.dataset.day = String(day);
+        if (day < 8) item.classList.add("done");
+        if (day === 8) item.classList.add("today");
+
+        const stateText = day < 8 ? "已收入歷程" : day === 8 ? "等待完成" : `第 ${mission.stage} 階段，尚未解鎖`;
+        item.innerHTML = `
+          <div class="day-node">D${String(day).padStart(3, "0")}</div>
+          <div class="day-info"><strong>${mission.title}</strong><span>${stateText}</span></div>
+          <div class="day-reward">+${mission.reward}</div>
+        `;
+        fragment.appendChild(item);
+        if (day === 8) {
+          todayMapNode = item;
+          todayMapState = item.querySelector(".day-info span");
+        }
+      }
+      missionMap.appendChild(fragment);
+      if (todayMapNode) {
+        missionMap.scrollTop = Math.max(0, todayMapNode.offsetTop - missionMap.clientHeight / 2);
+      }
+    }
+
+    function readStoredUser() {
+      try {
+        return JSON.parse(window.localStorage.getItem("dailyMissionUser") || "null");
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function decodeJwtPayload(token) {
+      const payload = token.split(".")[1] || "";
+      const normalizedBase = payload.replace(/-/g, "+").replace(/_/g, "/");
+      const normalized = normalizedBase + "=".repeat((4 - normalizedBase.length % 4) % 4);
+      const json = decodeURIComponent(
+        atob(normalized).split("").map((char) => {
+          return "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2);
+        }).join("")
+      );
+      return JSON.parse(json);
+    }
+
+    function setActive(target) {
+      navButtons.forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.jump === target);
+      });
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("is-visible");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 1900);
+    }
+
+    function updateAuthUi() {
+      if (!hasGoogleConfig || !hasGasConfig) {
+        syncDot.classList.remove("is-ready");
+        authTitle.textContent = "前端試用模式";
+        authSub.textContent = "目前先測前端：365 天任務、拍照選圖、打卡回饋都可操作；部署與 Google 登入之後再接。";
+        return;
+      }
+
+      if (currentUser && googleCredential) {
+        syncDot.classList.add("is-ready");
+        authTitle.textContent = `${currentUser.name || currentUser.email} 已登入`;
+        authSub.textContent = "完成任務時，資料會寫入站主 Google 帳號底下的 Sheets / Drive。";
+        signOutBtn.hidden = false;
+        return;
+      }
+
+      if (currentUser && !googleCredential) {
+        syncDot.classList.remove("is-ready");
+        authTitle.textContent = `${currentUser.name || currentUser.email} 需要重新登入`;
+        authSub.textContent = "為了保護登入憑證，重新打開網站時請再按一次 Google 登入。";
+        signOutBtn.hidden = false;
+        return;
+      }
+
+      syncDot.classList.remove("is-ready");
+      authTitle.textContent = "請用 Google 帳號登入";
+      authSub.textContent = "登入後可打卡、累積積分，後台以 Google ID token 辨識使用者。";
+      signOutBtn.hidden = true;
+    }
+
+    function handleCredentialResponse(response) {
+      googleCredential = response.credential;
+      const profile = decodeJwtPayload(response.credential);
+      currentUser = {
+        sub: profile.sub,
+        email: profile.email,
+        name: profile.name || profile.email,
+        picture: profile.picture || ""
+      };
+      window.sessionStorage.setItem("dailyMissionCredential", googleCredential);
+      window.localStorage.setItem("dailyMissionUser", JSON.stringify(currentUser));
+      updateAuthUi();
+      postToGas("login", { source: "github-pages", signedInAt: new Date().toISOString() });
+      loadPublicStats();
+      showToast("已用 Google 帳號登入，可以開始打卡");
+    }
+
+    window.handleCredentialResponse = handleCredentialResponse;
+
+    function initGoogleSignIn(attempt = 0) {
+      updateAuthUi();
+      if (!hasGoogleConfig) return;
+      if (!window.google || !google.accounts || !google.accounts.id) {
+        if (attempt < 20) window.setTimeout(() => initGoogleSignIn(attempt + 1), 200);
+        return;
+      }
+      if (googleSignIn.dataset.rendered === "true") return;
+      google.accounts.id.initialize({
+        client_id: config.GOOGLE_CLIENT_ID,
+        callback: handleCredentialResponse,
+        auto_select: false
+      });
+      google.accounts.id.renderButton(googleSignIn, {
+        type: "standard",
+        theme: "outline",
+        size: "large",
+        text: "signin_with",
+        shape: "pill",
+        locale: "zh_TW"
+      });
+      googleSignIn.dataset.rendered = "true";
+    }
+
+    function postToGas(action, payload) {
+      if (!hasGasConfig) return false;
+      if (!googleCredential) {
+        showToast("請先用 Google 帳號登入");
+        return false;
+      }
+      gasPostForm.action = config.GAS_WEB_APP_URL;
+      gasAction.value = action;
+      gasCredential.value = googleCredential;
+      gasPayload.value = JSON.stringify(payload);
+      gasPostForm.submit();
+      return true;
+    }
+
+    function loadPublicStats() {
+      if (!hasGasConfig) return;
+      const callbackName = "dailyMissionStats_" + Date.now();
+      window[callbackName] = (data) => {
+        if (data && data.ok && data.stats) {
+          checkinCount.textContent = data.stats.todayCheckins || checkinCount.textContent;
+          if (data.stats.totalPoints) xpCount.textContent = data.stats.totalPoints;
+        }
+        delete window[callbackName];
+        script.remove();
+      };
+      const script = document.createElement("script");
+      const url = new URL(config.GAS_WEB_APP_URL);
+      url.searchParams.set("action", "stats");
+      url.searchParams.set("callback", callbackName);
+      script.src = url.toString();
+      script.onerror = () => {
+        delete window[callbackName];
+        script.remove();
+      };
+      document.body.appendChild(script);
+    }
+
+    jumpButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const id = button.dataset.jump;
+        const target = document.getElementById(id);
+        if (!target) return;
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        setActive(id);
+      });
+    });
+
+    function resizePhoto(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const image = new Image();
+          image.onload = () => {
+            const maxSide = 1280;
+            const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.round(image.width * scale);
+            canvas.height = Math.round(image.height * scale);
+            const context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL("image/jpeg", .76);
+            resolve({
+              photoBase64: dataUrl.split(",")[1],
+              photoMimeType: "image/jpeg",
+              photoName: file.name
+            });
+          };
+          image.onerror = reject;
+          image.src = reader.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    photoInput.addEventListener("change", async () => {
+      const file = photoInput.files && photoInput.files[0];
+      if (!file) return;
+      try {
+        photoHint.textContent = "正在整理照片...";
+        selectedPhoto = await resizePhoto(file);
+        photoPreview.src = URL.createObjectURL(file);
+        uploadCard.classList.add("has-photo");
+        photoTitle.textContent = "照片已加入";
+        photoHint.textContent = file.name;
+        showToast("照片已準備好，可以送出打卡");
+      } catch (error) {
+        selectedPhoto = null;
+        photoHint.textContent = "照片處理失敗，請換一張再試。";
+        showToast("照片處理失敗");
+      }
+    });
+
+    completeBtn.addEventListener("click", () => {
+      if (!selectedPhoto) {
+        showToast("請先加入一張完成照片");
+        photoInput.click();
+        return;
+      }
+
+      const submitted = postToGas("checkin", {
+        missionId: "day-008-water-photo",
+        missionTitle: "喝一杯水，拍下你的杯子",
+        reflection: document.getElementById("reflection").value,
+        score: 92,
+        energyAwarded: 20,
+        pointsAwarded: 30,
+        completedAt: new Date().toISOString(),
+        ...(selectedPhoto || {})
+      });
+      coachCard.classList.add("is-visible");
+      completeBtn.textContent = "今日已完成";
+      completeBtn.disabled = true;
+      energyFill.style.width = "84%";
+      energyMini.textContent = "84";
+      energyCount.textContent = "84";
+      xpCount.textContent = "192";
+      checkinCount.textContent = "240";
+      if (todayMapNode) todayMapNode.classList.add("done");
+      if (todayMapState) todayMapState.textContent = "已完成，明天解鎖 D009";
+      historyState.textContent = "已完成今日打卡，AI 回饋 92 分";
+      historyTag.textContent = "完成";
+      showToast(submitted ? "已完成今日冒險，資料已送往 GAS 後台" : "已完成本機示範；接上 GAS 後會同步保存");
+      coachCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
+    signOutBtn.addEventListener("click", () => {
+      googleCredential = "";
+      currentUser = null;
+      window.sessionStorage.removeItem("dailyMissionCredential");
+      window.localStorage.removeItem("dailyMissionUser");
+      updateAuthUi();
+      showToast("已登出這台裝置");
+    });
+
+    syncBtn.addEventListener("click", () => {
+      loadPublicStats();
+      showToast(hasGasConfig ? "正在讀取 GAS 公開統計" : "尚未填入 GAS Web App URL");
+    });
+
+    window.addEventListener("load", () => {
+      renderMissionMap();
+      initGoogleSignIn();
+      loadPublicStats();
+    });
+  </script>
+</body>
+</html>
