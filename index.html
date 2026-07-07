@@ -6,25 +6,35 @@
   <title>每日一小步｜月曆任務</title>
   <style>
     :root {
-      --bg: #f5f7fb;
-      --surface: #ffffff;
-      --surface-2: #eef4fb;
-      --ink: #172033;
-      --muted: #66758a;
-      --line: #dce5ef;
-      --blue: #2563eb;
-      --blue-soft: #dbeafe;
-      --green: #139764;
-      --green-soft: #dcfce7;
-      --amber: #c57a08;
-      --amber-soft: #fef3c7;
-      --violet: #6d5bd8;
-      --violet-soft: #ede9fe;
-      --red: #dc5b4a;
-      --shadow: 0 14px 34px rgba(25, 39, 66, .10);
-      --radius: 22px;
-      --radius-sm: 16px;
-      --max: 1120px;
+      --color-bg-grad-1: #0f172a;
+      --color-bg-grad-2: #312e81;
+      --color-bg-grad-3: #0f766e;
+      --color-bg-grad-4: #f97316;
+      --color-glass-bg: rgba(255, 255, 255, .13);
+      --color-glass-bg-strong: rgba(255, 255, 255, .19);
+      --color-glass-bg-deep: rgba(15, 23, 42, .42);
+      --color-glass-border: rgba(255, 255, 255, .30);
+      --color-glass-border-strong: rgba(255, 255, 255, .48);
+      --ink: #f8fafc;
+      --muted: rgba(248, 250, 252, .74);
+      --quiet: rgba(248, 250, 252, .58);
+      --line: rgba(255, 255, 255, .22);
+      --blue: #60a5fa;
+      --blue-soft: rgba(96, 165, 250, .22);
+      --green: #34d399;
+      --green-soft: rgba(52, 211, 153, .20);
+      --amber: #fbbf24;
+      --amber-soft: rgba(251, 191, 36, .20);
+      --violet: #c4b5fd;
+      --violet-soft: rgba(196, 181, 253, .20);
+      --red: #fb7185;
+      --blur-glass: 18px;
+      --blur-glass-strong: 30px;
+      --shadow: 0 18px 48px rgba(2, 6, 23, .30), inset 0 1px 0 rgba(255, 255, 255, .22);
+      --shadow-lift: 0 26px 70px rgba(2, 6, 23, .40);
+      --radius: 28px;
+      --radius-sm: 18px;
+      --max: 1220px;
     }
 
     * {
@@ -37,13 +47,37 @@
 
     body {
       margin: 0;
-      background:
-        radial-gradient(circle at 18% 0%, rgba(37, 99, 235, .10), transparent 30%),
-        radial-gradient(circle at 90% 12%, rgba(19, 151, 100, .10), transparent 30%),
-        var(--bg);
       color: var(--ink);
       font-family: Inter, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
       letter-spacing: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(126, 34, 206, .82) 0%, transparent 38%),
+        radial-gradient(circle at 86% 18%, rgba(14, 165, 233, .58) 0%, transparent 36%),
+        radial-gradient(circle at 76% 86%, rgba(249, 115, 22, .66) 0%, transparent 42%),
+        radial-gradient(circle at 24% 78%, rgba(20, 184, 166, .50) 0%, transparent 42%),
+        linear-gradient(135deg, var(--color-bg-grad-1), var(--color-bg-grad-2) 48%, #1e293b 100%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, .85), rgba(0, 0, 0, .18));
+      pointer-events: none;
     }
 
     button,
@@ -59,7 +93,7 @@
     .app {
       width: min(var(--max), 100%);
       margin: 0 auto;
-      padding: 18px 14px 92px;
+      padding: 24px 16px 98px;
     }
 
     .topbar {
@@ -67,7 +101,16 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 12px;
+      margin-bottom: 18px;
+      padding: 10px 12px;
+    }
+
+    .glass {
+      background: var(--color-glass-bg);
+      border: 1px solid var(--color-glass-border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(var(--blur-glass)) saturate(160%);
+      -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(160%);
     }
 
     .brand {
@@ -84,9 +127,10 @@
       place-items: center;
       flex: 0 0 auto;
       border-radius: 14px;
-      background: var(--blue);
-      color: #fff;
+      background: linear-gradient(135deg, rgba(251, 191, 36, .95), rgba(52, 211, 153, .88));
+      color: #111827;
       font-weight: 950;
+      box-shadow: 0 12px 28px rgba(2, 6, 23, .22);
     }
 
     .brand strong {
@@ -124,10 +168,10 @@
       align-items: center;
       gap: 7px;
       padding: 11px 14px;
-      background: #fff;
-      color: var(--ink);
-      box-shadow: 0 8px 20px rgba(25, 39, 66, .08);
-      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .92);
+      color: #172033;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, .18);
+      border: 1px solid rgba(255, 255, 255, .58);
       white-space: nowrap;
     }
 
@@ -143,11 +187,21 @@
     }
 
     .hero {
-      margin-bottom: 14px;
-      padding: 20px;
-      border-radius: 28px;
-      background: linear-gradient(135deg, #ffffff 0%, #eff6ff 56%, #ecfdf5 100%);
-      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 18px;
+      padding: clamp(22px, 4vw, 38px);
+      border-radius: 34px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, rgba(255, 255, 255, .18), transparent 46%),
+        radial-gradient(circle at 82% 28%, rgba(251, 191, 36, .24), transparent 34%);
+      pointer-events: none;
     }
 
     .kicker {
@@ -155,20 +209,26 @@
       align-items: center;
       padding: 7px 10px;
       border-radius: 999px;
-      background: var(--blue-soft);
-      color: var(--blue);
+      background: rgba(255, 255, 255, .18);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .24);
       font-size: 12px;
       font-weight: 950;
       line-height: 1;
       margin-bottom: 12px;
     }
 
+    .hero > * {
+      position: relative;
+    }
+
     .hero h1 {
       margin: 0;
-      font-size: clamp(28px, 9vw, 48px);
+      font-size: clamp(34px, 6vw, 72px);
       line-height: 1.05;
       font-weight: 950;
       letter-spacing: 0;
+      max-width: 720px;
     }
 
     .hero p {
@@ -176,6 +236,93 @@
       color: var(--muted);
       font-size: 15px;
       line-height: 1.65;
+      max-width: 620px;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      min-width: min(360px, 100%);
+    }
+
+    .hero-metric {
+      padding: 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .22);
+    }
+
+    .hero-metric strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .hero-metric span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .leaderboard-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .rank-row {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 17px;
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .16);
+    }
+
+    .rank-row.is-me {
+      background: rgba(251, 191, 36, .16);
+      border-color: rgba(251, 191, 36, .38);
+    }
+
+    .rank-no {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: rgba(255, 255, 255, .92);
+      color: #172033;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .rank-row strong {
+      display: block;
+      overflow: hidden;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 950;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .rank-row span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .rank-score {
+      color: #fde68a;
+      font-size: 13px;
+      font-weight: 950;
+      white-space: nowrap;
     }
 
     .layout {
@@ -185,10 +332,7 @@
 
     .panel {
       overflow: hidden;
-      border: 1px solid rgba(220, 229, 239, .88);
       border-radius: var(--radius);
-      background: rgba(255, 255, 255, .94);
-      box-shadow: var(--shadow);
     }
 
     .panel-pad {
@@ -230,19 +374,23 @@
     }
 
     .pill.blue {
-      background: var(--blue-soft);
-      color: var(--blue);
+      background: rgba(96, 165, 250, .22);
+      color: #dbeafe;
+      border: 1px solid rgba(147, 197, 253, .28);
     }
 
     .pill.green {
-      background: var(--green-soft);
-      color: var(--green);
+      background: rgba(52, 211, 153, .20);
+      color: #bbf7d0;
+      border: 1px solid rgba(110, 231, 183, .30);
     }
 
     .wish-card {
       display: grid;
       gap: 14px;
-      background: linear-gradient(135deg, #172033 0%, #243855 100%);
+      background:
+        linear-gradient(135deg, rgba(15, 23, 42, .54), rgba(49, 46, 129, .28)),
+        var(--color-glass-bg);
       color: #fff;
     }
 
@@ -300,7 +448,7 @@
       width: 38%;
       height: 100%;
       border-radius: inherit;
-      background: linear-gradient(90deg, #60a5fa, #86efac);
+      background: linear-gradient(90deg, var(--amber), var(--green), var(--blue));
       transition: width .25s ease;
     }
 
@@ -333,8 +481,9 @@
     .month-btn {
       width: 40px;
       height: 40px;
-      background: var(--surface-2);
+      background: rgba(255, 255, 255, .14);
       color: var(--ink);
+      border: 1px solid rgba(255, 255, 255, .18);
       font-size: 22px;
     }
 
@@ -360,9 +509,9 @@
       min-width: 0;
       min-height: 48px;
       padding: 6px 4px;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(255, 255, 255, .18);
       border-radius: 14px;
-      background: #fff;
+      background: rgba(255, 255, 255, .10);
       color: var(--ink);
       font-size: 13px;
       font-weight: 950;
@@ -370,25 +519,25 @@
 
     .day-cell[disabled] {
       cursor: default;
-      opacity: .28;
+      opacity: .22;
     }
 
     .day-cell.is-complete {
-      background: var(--green-soft);
-      border-color: #a7f3d0;
-      color: var(--green);
+      background: rgba(52, 211, 153, .24);
+      border-color: rgba(134, 239, 172, .55);
+      color: #dcfce7;
     }
 
     .day-cell.is-today {
-      border-color: rgba(37, 99, 235, .45);
-      box-shadow: inset 0 0 0 2px rgba(37, 99, 235, .12);
+      border-color: rgba(251, 191, 36, .70);
+      box-shadow: inset 0 0 0 2px rgba(251, 191, 36, .16);
     }
 
     .day-cell.is-selected {
-      background: var(--blue);
-      border-color: var(--blue);
-      color: #fff;
-      box-shadow: 0 10px 18px rgba(37, 99, 235, .25);
+      background: linear-gradient(135deg, rgba(251, 191, 36, .96), rgba(96, 165, 250, .92));
+      border-color: rgba(255, 255, 255, .70);
+      color: #111827;
+      box-shadow: 0 14px 26px rgba(2, 6, 23, .30);
     }
 
     .day-cell small {
@@ -430,10 +579,10 @@
       flex: 0 0 auto;
       border-radius: 20px;
       background: var(--blue);
-      color: #fff;
+      color: #08111f;
       font-size: 15px;
       font-weight: 950;
-      box-shadow: 0 12px 22px rgba(37, 99, 235, .24);
+      box-shadow: 0 16px 32px rgba(2, 6, 23, .28);
     }
 
     .step-list {
@@ -451,7 +600,8 @@
       gap: 9px;
       padding: 10px;
       border-radius: 15px;
-      background: var(--surface-2);
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .16);
       color: var(--ink);
       font-size: 14px;
       font-weight: 850;
@@ -463,8 +613,8 @@
       display: grid;
       place-items: center;
       border-radius: 11px;
-      background: #fff;
-      color: var(--blue);
+      background: rgba(255, 255, 255, .92);
+      color: #2563eb;
       font-size: 12px;
     }
 
@@ -472,16 +622,16 @@
       display: grid;
       gap: 10px;
       padding: 12px;
-      border: 2px dashed #c9d7e8;
+      border: 1px dashed rgba(255, 255, 255, .44);
       border-radius: 18px;
-      background: #fbfdff;
+      background: rgba(255, 255, 255, .10);
       text-align: center;
       cursor: pointer;
     }
 
     .proof-card.has-photo {
-      border-color: var(--blue);
-      background: #f8fbff;
+      border-color: rgba(251, 191, 36, .78);
+      background: rgba(251, 191, 36, .12);
     }
 
     .photo-preview {
@@ -490,7 +640,7 @@
       max-height: 210px;
       object-fit: cover;
       border-radius: 15px;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(255, 255, 255, .24);
     }
 
     .proof-card.has-photo .photo-preview {
@@ -523,14 +673,15 @@
     }
 
     .primary-btn {
-      background: var(--blue);
-      color: #fff;
-      box-shadow: 0 12px 22px rgba(37, 99, 235, .22);
+      background: var(--amber);
+      color: #1e1b4b;
+      box-shadow: 0 14px 28px rgba(251, 191, 36, .28);
     }
 
     .secondary-btn {
-      background: var(--surface-2);
+      background: rgba(255, 255, 255, .14);
       color: var(--ink);
+      border: 1px solid rgba(255, 255, 255, .18);
     }
 
     .advanced-panel {
@@ -538,8 +689,10 @@
       gap: 12px;
       padding: 16px;
       border-radius: var(--radius);
-      background: linear-gradient(135deg, var(--violet-soft), #ffffff);
-      border: 1px solid #ddd6fe;
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .22);
+      backdrop-filter: blur(14px) saturate(150%);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
     }
 
     .advanced-panel.is-visible {
@@ -564,10 +717,10 @@
       resize: vertical;
       width: 100%;
       padding: 13px;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(255, 255, 255, .22);
       border-radius: 16px;
       outline: none;
-      background: #fff;
+      background: rgba(15, 23, 42, .34);
       color: var(--ink);
       font-size: 15px;
       line-height: 1.55;
@@ -602,7 +755,8 @@
       gap: 10px;
       padding: 10px;
       border-radius: 16px;
-      background: var(--surface-2);
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .16);
     }
 
     .journey-dot {
@@ -611,8 +765,8 @@
       display: grid;
       place-items: center;
       border-radius: 15px;
-      background: #fff;
-      color: var(--blue);
+      background: rgba(255, 255, 255, .92);
+      color: #2563eb;
       font-size: 12px;
       font-weight: 950;
     }
@@ -644,11 +798,12 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 7px;
       padding: 8px;
-      border: 1px solid rgba(220, 229, 239, .9);
+      border: 1px solid rgba(255, 255, 255, .28);
       border-radius: 24px;
-      background: rgba(255, 255, 255, .94);
+      background: rgba(15, 23, 42, .54);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
     }
 
     .bottom-nav button {
@@ -662,8 +817,8 @@
     }
 
     .bottom-nav button.is-active {
-      background: var(--blue-soft);
-      color: var(--blue);
+      background: rgba(255, 255, 255, .18);
+      color: #fff;
     }
 
     .toast {
@@ -676,12 +831,15 @@
       transform: translateX(-50%);
       padding: 13px 16px;
       border-radius: 18px;
-      background: rgba(23, 32, 51, .96);
+      background: rgba(15, 23, 42, .88);
       color: #fff;
       text-align: center;
       font-size: 14px;
       line-height: 1.45;
       box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, .22);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
     }
 
     .toast.is-visible {
@@ -690,11 +848,11 @@
 
     @media (min-width: 820px) {
       .app {
-        padding: 24px 22px 36px;
+        padding: 28px 22px 42px;
       }
 
       .layout {
-        grid-template-columns: .95fr 1.05fr;
+        grid-template-columns: .92fr 1.08fr;
         align-items: start;
       }
 
@@ -721,14 +879,74 @@
 
     @media (min-width: 1080px) {
       .layout {
-        grid-template-columns: 360px minmax(0, 1fr) 290px;
+        grid-template-columns: 320px minmax(0, 1fr) 340px;
+        grid-template-areas:
+          "wish calendar mission"
+          "leaderboard calendar mission"
+          "journey calendar mission";
+        align-items: stretch;
+      }
+
+      #wish {
+        grid-area: wish;
+      }
+
+      #calendar {
+        grid-area: calendar;
+      }
+
+      #leaderboard {
+        grid-area: leaderboard;
+      }
+
+      #mission {
+        grid-area: mission;
+      }
+
+      #journey {
+        grid-area: journey;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app {
+        padding-inline: 12px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .brand span {
+        white-space: normal;
+      }
+
+      .login-btn {
+        padding: 10px 11px;
+        font-size: 13px;
+      }
+
+      .hero-metrics,
+      .wish-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .week-row,
+      .calendar-grid {
+        gap: 5px;
+      }
+
+      .day-cell {
+        min-height: 44px;
+        border-radius: 12px;
+        font-size: 12px;
       }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <header class="topbar">
+    <header class="glass topbar">
       <div class="brand">
         <div class="brand-mark">一</div>
         <div>
@@ -739,17 +957,21 @@
       <button class="login-btn" id="googleLoginBtn" type="button"><span>G</span>登入 Google 帳號</button>
     </header>
 
-    <section class="hero" id="today">
+    <section class="glass hero" id="today">
       <div>
         <div class="kicker">前端試用模式</div>
         <h1>每天解鎖一個小任務。</h1>
         <p>用月曆選日期，完成今天的小行動，拍下證明，再寫出一段能留下來的感受。</p>
       </div>
-      <span class="pill blue" id="heroDayLabel">Day 1 / 365</span>
+      <div class="hero-metrics" aria-label="年度任務狀態">
+        <div class="hero-metric"><strong id="heroDayLabel">Day 1</strong><span>年度能量 / 365</span></div>
+        <div class="hero-metric"><strong id="scoreTotal">0</strong><span>綜合積分</span></div>
+        <div class="hero-metric"><strong id="rankLabel">第 5</strong><span>目前排名</span></div>
+      </div>
     </section>
 
     <main class="layout">
-      <section class="panel panel-pad wish-card" id="wish">
+      <section class="glass panel panel-pad wish-card" id="wish">
         <div class="wish-copy">
           <span id="wishMonth">7 月｜補水挑戰</span>
           <h2 id="wishTitle">讓身體醒過來</h2>
@@ -762,7 +984,18 @@
         <div class="progress-track" aria-label="本月願望進度"><span id="wishProgress"></span></div>
       </section>
 
-      <section class="panel panel-pad" id="calendar">
+      <aside class="glass panel panel-pad" id="leaderboard">
+        <div class="section-title">
+          <div>
+            <h2>本月排行榜</h2>
+            <p>任務、天數、進階撰寫都會加分。</p>
+          </div>
+          <span class="pill green">即時</span>
+        </div>
+        <div class="leaderboard-list" id="leaderboardList"></div>
+      </aside>
+
+      <section class="glass panel panel-pad" id="calendar">
         <div class="section-title">
           <div>
             <h2>月曆任務地圖</h2>
@@ -786,7 +1019,7 @@
         <div class="calendar-grid" id="calendarGrid" aria-label="任務月曆"></div>
       </section>
 
-      <section class="panel panel-pad mission-card" id="mission">
+      <section class="glass panel panel-pad mission-card" id="mission">
         <div class="mission-top">
           <div>
             <div class="kicker">今天的小任務</div>
@@ -822,7 +1055,7 @@
         </section>
       </section>
 
-      <aside class="panel panel-pad" id="journey">
+      <aside class="glass panel panel-pad" id="journey">
         <div class="section-title">
           <div>
             <h2>歷程</h2>
@@ -928,8 +1161,18 @@
     const reflectionInput = document.getElementById("reflectionInput");
     const reflectionScore = document.getElementById("reflectionScore");
     const reflectionHint = document.getElementById("reflectionHint");
+    const scoreTotal = document.getElementById("scoreTotal");
+    const rankLabel = document.getElementById("rankLabel");
+    const leaderboardList = document.getElementById("leaderboardList");
     const journeyList = document.getElementById("journeyList");
     const toast = document.getElementById("toast");
+
+    const demoPeers = [
+      { name: "晨光挑戰者", score: 286 },
+      { name: "補水隊長", score: 232 },
+      { name: "穩定前進者", score: 184 },
+      { name: "小步收藏家", score: 118 }
+    ];
 
     const missions = Array.from({ length: totalDays }, (_, index) => {
       const template = taskTemplates[index % taskTemplates.length];
@@ -1069,6 +1312,7 @@
       streakCount.textContent = streak;
       badgeRemain.textContent = remain;
       wishProgress.style.width = `${Math.min(100, Math.round((done / 21) * 100))}%`;
+      renderLeaderboard();
     }
 
     function calculateStreak() {
@@ -1078,6 +1322,45 @@
         streak += 1;
       }
       return streak;
+    }
+
+    function scoreReflection(text, completed) {
+      const clean = text.trim();
+      const concreteWords = ["精神", "口渴", "專注", "心情", "身體", "時間", "早上", "下午", "晚上", "感覺", "變化"];
+      let score = 0;
+      if (clean.length >= 20) score += 35;
+      if (clean.length >= 60) score += 25;
+      if (concreteWords.some((word) => clean.includes(word))) score += 25;
+      if (completed) score += 15;
+      return Math.min(100, score);
+    }
+
+    function calculateTotalScore() {
+      const completedPoints = missions.reduce((total, mission) => {
+        return total + (state.completed[mission.day] ? mission.points : 0);
+      }, 0);
+      const reflectionPoints = Object.entries(state.reflections || {}).reduce((total, [day, text]) => {
+        return total + scoreReflection(text || "", Boolean(state.completed[day]));
+      }, 0);
+      return completedPoints + reflectionPoints + calculateStreak() * 5;
+    }
+
+    function renderLeaderboard() {
+      const myScore = calculateTotalScore();
+      const board = [
+        ...demoPeers,
+        { name: "你", score: myScore, me: true }
+      ].sort((a, b) => b.score - a.score);
+      const myRank = board.findIndex((item) => item.me) + 1;
+      scoreTotal.textContent = myScore;
+      rankLabel.textContent = `第 ${myRank}`;
+      leaderboardList.innerHTML = board.map((item, index) => `
+        <article class="rank-row ${item.me ? "is-me" : ""}">
+          <div class="rank-no">${index + 1}</div>
+          <div><strong>${item.name}</strong><span>${item.me ? "任務 + 天數 + 進階撰寫" : "本月任務進行中"}</span></div>
+          <div class="rank-score">${item.score} 分</div>
+        </article>
+      `).join("");
     }
 
     function completeMission() {
@@ -1093,19 +1376,14 @@
       advancedPanel.classList.add("is-visible");
       renderCalendar();
       renderJourney();
+      renderLeaderboard();
       showToast("已完成，進階挑戰已解鎖");
       advancedPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
     function updateReflectionScore() {
       const text = reflectionInput.value.trim();
-      const concreteWords = ["精神", "口渴", "專注", "心情", "身體", "時間", "早上", "下午", "晚上", "感覺", "變化"];
-      let score = 0;
-      if (text.length >= 20) score += 35;
-      if (text.length >= 60) score += 25;
-      if (concreteWords.some((word) => text.includes(word))) score += 25;
-      if (state.completed[selectedDay]) score += 15;
-      score = Math.min(100, score);
+      const score = scoreReflection(text, Boolean(state.completed[selectedDay]));
 
       reflectionScore.textContent = `目前 ${score} 分`;
       if (text.length < 20) {
@@ -1117,6 +1395,7 @@
       }
       state.reflections[selectedDay] = text;
       saveState();
+      renderLeaderboard();
     }
 
     function renderJourney() {
