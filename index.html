@@ -1334,7 +1334,7 @@
           if (state.completed[mission.day]) button.classList.add("is-complete");
           if (mission.day === selectedDay) button.classList.add("is-selected");
           if (mission.day === 1) button.classList.add("is-today");
-          button.addEventListener("click", () => selectDay(mission.day));
+          button.addEventListener("click", () => selectDay(mission.day, { scrollToMission: true }));
         }
         grid.appendChild(button);
       }
@@ -1364,7 +1364,13 @@
       updateWishStats();
     }
 
-    function selectDay(day) {
+    function scrollMissionIntoView() {
+      requestAnimationFrame(() => {
+        document.getElementById("mission").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+
+    function selectDay(day, options = {}) {
       selectedDay = day;
       state.selectedDay = day;
       saveState();
@@ -1378,6 +1384,9 @@
       photoHint.textContent = "手機可拍照，電腦可選圖片。";
       renderMission();
       renderCalendar();
+      if (options.scrollToMission) {
+        scrollMissionIntoView();
+      }
     }
 
     function renderMission() {

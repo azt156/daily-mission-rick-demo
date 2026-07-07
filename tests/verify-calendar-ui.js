@@ -56,6 +56,8 @@ includes('renderMonthGrid', 'shared two-month calendar renderer');
 includes('getProgramDayForDate', 'date-based mission day resolver');
 includes('applyDailyAutoSelection', 'daily auto month selection');
 includes('lastVisitDate', 'daily visit reset state');
+includes('scrollMissionIntoView', 'calendar date scrolls to mission card');
+includes('selectDay(mission.day, { scrollToMission: true })', 'date click enables mission scroll');
 excludes('365 天任務卷軸', 'old long-scroll hero');
 excludes('mission-map', 'old long-scroll mission map');
 excludes('taskTemplates[index % taskTemplates.length]', 'old repeating task templates');
