@@ -6,12 +6,12 @@
   <title>每日一小步｜月曆任務</title>
   <style>
     :root {
-      --color-bg-grad-1: #0f172a;
-      --color-bg-grad-2: #312e81;
+      --color-bg-grad-1: #0b1120;
+      --color-bg-grad-2: #1f2937;
       --color-bg-grad-3: #0f766e;
-      --color-bg-grad-4: #f97316;
-      --color-glass-bg: rgba(255, 255, 255, .13);
-      --color-glass-bg-strong: rgba(255, 255, 255, .19);
+      --color-bg-grad-4: #d6a84f;
+      --color-glass-bg: rgba(255, 255, 255, .11);
+      --color-glass-bg-strong: rgba(255, 255, 255, .16);
       --color-glass-bg-deep: rgba(15, 23, 42, .42);
       --color-glass-border: rgba(255, 255, 255, .30);
       --color-glass-border-strong: rgba(255, 255, 255, .48);
@@ -19,14 +19,14 @@
       --muted: rgba(248, 250, 252, .74);
       --quiet: rgba(248, 250, 252, .58);
       --line: rgba(255, 255, 255, .22);
-      --blue: #60a5fa;
-      --blue-soft: rgba(96, 165, 250, .22);
-      --green: #34d399;
-      --green-soft: rgba(52, 211, 153, .20);
-      --amber: #fbbf24;
-      --amber-soft: rgba(251, 191, 36, .20);
-      --violet: #c4b5fd;
-      --violet-soft: rgba(196, 181, 253, .20);
+      --blue: #93c5fd;
+      --blue-soft: rgba(147, 197, 253, .18);
+      --green: #86efac;
+      --green-soft: rgba(134, 239, 172, .16);
+      --amber: #f5d58a;
+      --amber-soft: rgba(245, 213, 138, .16);
+      --violet: #c7d2fe;
+      --violet-soft: rgba(199, 210, 254, .16);
       --red: #fb7185;
       --blur-glass: 18px;
       --blur-glass-strong: 30px;
@@ -60,11 +60,10 @@
       inset: 0;
       z-index: -2;
       background:
-        radial-gradient(circle at 8% 12%, rgba(126, 34, 206, .82) 0%, transparent 38%),
-        radial-gradient(circle at 86% 18%, rgba(14, 165, 233, .58) 0%, transparent 36%),
-        radial-gradient(circle at 76% 86%, rgba(249, 115, 22, .66) 0%, transparent 42%),
-        radial-gradient(circle at 24% 78%, rgba(20, 184, 166, .50) 0%, transparent 42%),
-        linear-gradient(135deg, var(--color-bg-grad-1), var(--color-bg-grad-2) 48%, #1e293b 100%);
+        radial-gradient(circle at 10% 12%, rgba(20, 184, 166, .34) 0%, transparent 42%),
+        radial-gradient(circle at 84% 18%, rgba(147, 197, 253, .28) 0%, transparent 40%),
+        radial-gradient(circle at 78% 86%, rgba(245, 213, 138, .22) 0%, transparent 44%),
+        linear-gradient(135deg, var(--color-bg-grad-1), var(--color-bg-grad-2) 58%, #111827 100%);
     }
 
     body::after {
@@ -129,15 +128,15 @@
       border-radius: 14px;
       background: linear-gradient(135deg, rgba(251, 191, 36, .95), rgba(52, 211, 153, .88));
       color: #111827;
-      font-weight: 950;
+      font-weight: 850;
       box-shadow: 0 12px 28px rgba(2, 6, 23, .22);
     }
 
     .brand strong {
       display: block;
       font-size: 16px;
-      line-height: 1.2;
-      font-weight: 950;
+      line-height: 1.35;
+      font-weight: 850;
     }
 
     .brand span {
@@ -145,7 +144,7 @@
       margin-top: 2px;
       color: var(--muted);
       font-size: 12px;
-      line-height: 1.25;
+      line-height: 1.5;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -158,8 +157,8 @@
     .month-btn {
       border: 0;
       border-radius: 999px;
-      font-weight: 950;
-      line-height: 1;
+      font-weight: 850;
+      line-height: 1.25;
       transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
     }
 
@@ -207,14 +206,14 @@
     .kicker {
       display: inline-flex;
       align-items: center;
-      padding: 7px 10px;
+      padding: 8px 12px;
       border-radius: 999px;
       background: rgba(255, 255, 255, .18);
       color: #fff;
       border: 1px solid rgba(255, 255, 255, .24);
       font-size: 12px;
-      font-weight: 950;
-      line-height: 1;
+      font-weight: 850;
+      line-height: 1.25;
       margin-bottom: 12px;
     }
 
@@ -225,8 +224,8 @@
     .hero h1 {
       margin: 0;
       font-size: clamp(34px, 6vw, 72px);
-      line-height: 1.05;
-      font-weight: 950;
+      line-height: 1.12;
+      font-weight: 850;
       letter-spacing: 0;
       max-width: 720px;
     }
@@ -235,7 +234,7 @@
       margin: 12px 0 0;
       color: var(--muted);
       font-size: 15px;
-      line-height: 1.65;
+      line-height: 1.85;
       max-width: 620px;
     }
 
@@ -256,8 +255,8 @@
     .hero-metric strong {
       display: block;
       font-size: 24px;
-      line-height: 1;
-      font-weight: 950;
+      line-height: 1.2;
+      font-weight: 850;
     }
 
     .hero-metric span {
@@ -265,7 +264,7 @@
       margin-top: 6px;
       color: var(--muted);
       font-size: 12px;
-      font-weight: 850;
+      font-weight: 750;
     }
 
     .leaderboard-list {
@@ -298,7 +297,7 @@
       background: rgba(255, 255, 255, .92);
       color: #172033;
       font-size: 13px;
-      font-weight: 950;
+      font-weight: 850;
     }
 
     .rank-row strong {
@@ -306,7 +305,7 @@
       overflow: hidden;
       color: var(--ink);
       font-size: 13px;
-      font-weight: 950;
+      font-weight: 850;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
@@ -321,7 +320,7 @@
     .rank-score {
       color: #fde68a;
       font-size: 13px;
-      font-weight: 950;
+      font-weight: 850;
       white-space: nowrap;
     }
 
@@ -350,8 +349,8 @@
     .section-title h2 {
       margin: 0;
       font-size: 19px;
-      line-height: 1.2;
-      font-weight: 950;
+      line-height: 1.35;
+      font-weight: 850;
     }
 
     .section-title p {
@@ -369,7 +368,7 @@
       padding: 7px 10px;
       border-radius: 999px;
       font-size: 12px;
-      font-weight: 950;
+      font-weight: 850;
       white-space: nowrap;
     }
 
@@ -403,8 +402,8 @@
     .wish-copy h2 {
       margin: 6px 0 0;
       font-size: 24px;
-      line-height: 1.18;
-      font-weight: 950;
+      line-height: 1.35;
+      font-weight: 850;
     }
 
     .wish-stats {
@@ -423,8 +422,8 @@
     .wish-stat strong {
       display: block;
       font-size: 20px;
-      line-height: 1;
-      font-weight: 950;
+      line-height: 1.2;
+      font-weight: 850;
     }
 
     .wish-stat span {
@@ -468,8 +467,8 @@
     .month-title strong {
       display: block;
       font-size: 18px;
-      line-height: 1.2;
-      font-weight: 950;
+      line-height: 1.35;
+      font-weight: 850;
     }
 
     .month-title span {
@@ -502,7 +501,7 @@
       text-align: center;
       color: var(--muted);
       font-size: 11px;
-      font-weight: 950;
+      font-weight: 850;
     }
 
     .day-cell {
@@ -514,7 +513,7 @@
       background: rgba(255, 255, 255, .10);
       color: var(--ink);
       font-size: 13px;
-      font-weight: 950;
+      font-weight: 850;
     }
 
     .day-cell[disabled] {
@@ -567,8 +566,8 @@
     .mission-top h2 {
       margin: 6px 0 0;
       font-size: 25px;
-      line-height: 1.12;
-      font-weight: 950;
+      line-height: 1.32;
+      font-weight: 850;
     }
 
     .day-badge {
@@ -581,7 +580,7 @@
       background: var(--blue);
       color: #08111f;
       font-size: 15px;
-      font-weight: 950;
+      font-weight: 850;
       box-shadow: 0 16px 32px rgba(2, 6, 23, .28);
     }
 
@@ -650,7 +649,7 @@
     .proof-card strong {
       color: var(--ink);
       font-size: 15px;
-      font-weight: 950;
+      font-weight: 850;
     }
 
     .proof-card span {
@@ -702,7 +701,7 @@
     .advanced-panel h2 {
       margin: 0;
       font-size: 19px;
-      font-weight: 950;
+      font-weight: 850;
     }
 
     .advanced-panel p {
@@ -734,7 +733,7 @@
     .reflection-meter strong {
       color: var(--violet);
       font-size: 14px;
-      font-weight: 950;
+      font-weight: 850;
     }
 
     .reflection-meter span {
@@ -768,7 +767,7 @@
       background: rgba(255, 255, 255, .92);
       color: #2563eb;
       font-size: 12px;
-      font-weight: 950;
+      font-weight: 850;
     }
 
     .journey-item strong {
@@ -776,7 +775,7 @@
       overflow: hidden;
       color: var(--ink);
       font-size: 13px;
-      font-weight: 950;
+      font-weight: 850;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
@@ -813,7 +812,7 @@
       background: transparent;
       color: var(--muted);
       font-size: 12px;
-      font-weight: 950;
+      font-weight: 850;
     }
 
     .bottom-nav button.is-active {
@@ -964,7 +963,7 @@
         <p>用月曆選日期，完成今天的小行動，拍下證明，再寫出一段能留下來的感受。</p>
       </div>
       <div class="hero-metrics" aria-label="年度任務狀態">
-        <div class="hero-metric"><strong id="heroDayLabel">Day 1</strong><span>年度能量 / 365</span></div>
+        <div class="hero-metric"><strong id="heroDayLabel">Day 1</strong><span>年度能量｜2026 / 7 - 2027 / 7</span></div>
         <div class="hero-metric"><strong id="scoreTotal">0</strong><span>綜合積分</span></div>
         <div class="hero-metric"><strong id="rankLabel">第 5</strong><span>目前排名</span></div>
       </div>
@@ -1094,46 +1093,66 @@
       { name: "情緒挑戰", wish: "記錄今天的心情", badge: "情緒徽章" },
       { name: "專注挑戰", wish: "完成一段不被打斷的時間", badge: "專注徽章" },
       { name: "幫助挑戰", wish: "做一件對別人有幫助的小事", badge: "幫助徽章" },
-      { name: "回顧挑戰", wish: "整理一年的自己", badge: "回顧徽章" }
+      { name: "回顧挑戰", wish: "整理一年的自己", badge: "回顧徽章" },
+      { name: "成書挑戰", wish: "把歷程變成作品", badge: "成書徽章" }
     ];
 
-    const taskTemplates = [
-      {
-        title: "喝一杯水，拍下你的杯子",
-        steps: ["倒一杯水", "慢慢喝完", "拍下杯子或水壺"],
-        prompt: "今天喝完水後，身體有什麼變化？請描述精神、口渴感、專注力、心情，或身體感覺。"
-      },
-      {
-        title: "整理桌面 3 分鐘",
-        steps: ["設定 3 分鐘", "只整理一小塊", "拍下整理後的桌面"],
-        prompt: "整理後，你的心情或專注感有什麼不同？請描述整理前後的差別。"
-      },
-      {
-        title: "對一個人說謝謝",
-        steps: ["想一個想感謝的人", "說出一句謝謝", "記錄你說完後的感覺"],
-        prompt: "你今天謝謝了誰？對方有什麼反應？你自己的心情有什麼變化？"
-      },
-      {
-        title: "觀察一個自然現象",
-        steps: ["走到窗邊或戶外", "找一個自然現象", "拍下你觀察到的畫面"],
-        prompt: "你觀察到了什麼？它讓你想到哪一個自然課概念或生活問題？"
-      },
-      {
-        title: "問 AI 一個好問題",
-        steps: ["想一件想知道的事", "把問題寫完整", "拍下或記下你的問題"],
-        prompt: "你今天問了什麼問題？你覺得這個問題好在哪裡？還能怎麼問得更清楚？"
-      },
-      {
-        title: "走路 5 分鐘",
-        steps: ["離開座位", "走路 5 分鐘", "拍下路上的一個細節"],
-        prompt: "走完 5 分鐘後，身體或心情有什麼變化？請寫出一個具體感覺。"
-      },
-      {
-        title: "讀一小段文字",
-        steps: ["選一小段文字", "讀完它", "拍下或寫下一個關鍵字"],
-        prompt: "這段文字中哪一句讓你有感覺？它跟你的生活有什麼關係？"
-      }
+    const missionBlueprints = [
+      { name: "補水挑戰", item: "水杯", action: "補水", proof: "水杯或水壺", reflection: "精神、口渴感或身體狀態" },
+      { name: "睡眠挑戰", item: "睡前環境", action: "好眠", proof: "睡前準備畫面", reflection: "精神、疲倦或作息變化" },
+      { name: "整理挑戰", item: "桌面一角", action: "整理", proof: "整理前後畫面", reflection: "專注、空間或心情變化" },
+      { name: "感謝挑戰", item: "一句謝謝", action: "感謝", proof: "文字紀錄或提醒卡", reflection: "互動、關係或心情變化" },
+      { name: "觀察挑戰", item: "自然現象", action: "觀察", proof: "觀察到的畫面", reflection: "好奇、發現或自然課連結" },
+      { name: "閱讀挑戰", item: "一小段文字", action: "閱讀", proof: "書頁或關鍵句", reflection: "理解、疑問或生活連結" },
+      { name: "提問挑戰", item: "一個好問題", action: "提問", proof: "問題截圖或筆記", reflection: "問題品質、答案或下一問" },
+      { name: "運動挑戰", item: "身體動作", action: "活動", proof: "運動後畫面", reflection: "呼吸、肌肉或心情變化" },
+      { name: "情緒挑戰", item: "今日心情", action: "覺察", proof: "心情紀錄", reflection: "情緒、事件或身體訊號" },
+      { name: "專注挑戰", item: "十分鐘任務", action: "專注", proof: "計時或完成畫面", reflection: "分心點、完成感或阻力" },
+      { name: "幫助挑戰", item: "一個小幫忙", action: "助人", proof: "行動紀錄", reflection: "對方反應、自己的感受或學到的事" },
+      { name: "回顧挑戰", item: "一段歷程", action: "回顧", proof: "照片或文字整理畫面", reflection: "成長、轉折或最想保留的片段" },
+      { name: "成書挑戰", item: "作品素材", action: "成書", proof: "整理後的素材畫面", reflection: "主題、章節或想說給未來自己的話" }
     ];
+
+    const dailyFocuses = [
+      "先做 30 秒版本", "準備固定位置", "拍下開始前狀態", "完成一次最小行動", "把提醒放到看得見的地方",
+      "替今天設定一個小目標", "選一個最容易完成的時間", "完成後立刻拍證明", "用一句話記下變化", "把阻力寫出來",
+      "把任務拆成兩小步", "找一個人分享今天進度", "替明天先準備一個入口", "只做一分鐘也算完成", "記錄今天的身體訊號",
+      "記錄今天的心情訊號", "找一個生活中的證據", "完成後比較前後差異", "把今天的關鍵字寫下來", "問自己為什麼有幫助",
+      "拍一張能代表今天的照片", "把今天做法寫成一句教學", "挑一個最想保留的細節", "把失敗原因寫成下一步", "把今天任務放進日常路線",
+      "做完後停十秒感受", "用三句話描述完整過程", "替自己打一句鼓勵", "整理一個可以累積的素材", "把今天成果命名", "寫下明天可以更容易的方法"
+    ];
+
+    function monthIndexForDate(date) {
+      const index = (date.getFullYear() - programStart.getFullYear()) * 12 + date.getMonth() - programStart.getMonth();
+      return Math.max(0, Math.min(missionBlueprints.length - 1, index));
+    }
+
+    function buildMissionPlans() {
+      const plans = [];
+      for (let day = 0; day < totalDays; day += 1) {
+        const date = new Date(programStart);
+        date.setDate(programStart.getDate() + day);
+        const blueprint = missionBlueprints[monthIndexForDate(date)];
+        const focus = dailyFocuses[day % dailyFocuses.length];
+        const stageDay = (day % dailyFocuses.length) + 1;
+        const title = `${blueprint.name}｜${focus}`;
+        plans.push({
+          title,
+          steps: [
+            `完成「${blueprint.action}」的第 ${stageDay} 個小行動`,
+            `拍下${blueprint.proof}`,
+            `寫下${blueprint.reflection}的一個具體變化`
+          ],
+          prompt: `今天的任務是「${title}」。請完整描述你做了什麼、什麼時候做、遇到什麼阻力，以及${blueprint.reflection}。`
+        });
+      }
+
+      const uniqueMissionTitles = new Set(plans.map((plan) => plan.title));
+      if (uniqueMissionTitles.size === totalDays) {
+        return plans;
+      }
+      throw new Error("年度任務資料重複，請檢查 missionBlueprints 與 dailyFocuses。");
+    }
 
     const calendarGrid = document.getElementById("calendarGrid");
     const monthTitle = document.getElementById("monthTitle");
@@ -1174,17 +1193,18 @@
       { name: "小步收藏家", score: 118 }
     ];
 
+    const missionPlans = buildMissionPlans();
     const missions = Array.from({ length: totalDays }, (_, index) => {
-      const template = taskTemplates[index % taskTemplates.length];
+      const plan = missionPlans[index];
       const date = new Date(programStart);
       date.setDate(programStart.getDate() + index);
       return {
         day: index + 1,
         date,
-        monthIndex: Math.min(11, Math.floor(index / 31)),
-        title: template.title,
-        steps: template.steps,
-        prompt: template.prompt,
+        monthIndex: monthIndexForDate(date),
+        title: plan.title,
+        steps: plan.steps,
+        prompt: plan.prompt,
         points: 20 + Math.floor(index / 30)
       };
     });
