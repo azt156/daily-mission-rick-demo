@@ -1243,7 +1243,7 @@
     });
 
     let state = readState();
-    let selectedDay = state.selectedDay || 1;
+    let selectedDay = applyDailyAutoSelection();
     let visibleMonth = new Date(missions[selectedDay - 1].date.getFullYear(), missions[selectedDay - 1].date.getMonth(), 1);
     let selectedPhotoUrl = "";
 
@@ -1257,6 +1257,33 @@
 
     function saveState() {
       localStorage.setItem(storageKey, JSON.stringify(state));
+    }
+
+    function localDay(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function getProgramDayForDate(date) {
+      const oneDay = 24 * 60 * 60 * 1000;
+      const diff = Math.floor((localDay(date) - localDay(programStart)) / oneDay);
+      return Math.min(totalDays, Math.max(1, diff + 1));
+    }
+
+    function applyDailyAutoSelection() {
+      const today = new Date();
+      const todayKey = dateKey(today);
+      const todayProgramDay = getProgramDayForDate(today);
+      const storedDay = Math.min(totalDays, Math.max(1, Number(state.selectedDay) || todayProgramDay));
+
+      if (state.lastVisitDate !== todayKey) {
+        state.selectedDay = todayProgramDay;
+        state.lastVisitDate = todayKey;
+        saveState();
+        return todayProgramDay;
+      }
+
+      state.selectedDay = storedDay;
+      return storedDay;
     }
 
     function dateKey(date) {
