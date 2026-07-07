@@ -3,45 +3,33 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>每日一小步｜任務地圖 Demo</title>
-  <script>
-    window.DAILY_MISSION_CONFIG = {
-      GOOGLE_CLIENT_ID: "PASTE_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-      GAS_WEB_APP_URL: "PASTE_APPS_SCRIPT_WEB_APP_URL"
-    };
-  </script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <title>每日一小步｜月曆任務</title>
   <style>
     :root {
-      --bg: #f6f7fb;
+      --bg: #f5f7fb;
       --surface: #ffffff;
-      --surface-2: #f0f4f8;
-      --surface-3: #e9edf5;
-      --ink: #17202f;
-      --ink-2: #526071;
-      --ink-3: #7a8796;
+      --surface-2: #eef4fb;
+      --ink: #172033;
+      --muted: #66758a;
+      --line: #dce5ef;
       --blue: #2563eb;
       --blue-soft: #dbeafe;
-      --green: #159a6a;
+      --green: #139764;
       --green-soft: #dcfce7;
-      --amber: #c87900;
+      --amber: #c57a08;
       --amber-soft: #fef3c7;
-      --coral: #e65f46;
-      --coral-soft: #ffe4dc;
-      --violet: #7557d8;
+      --violet: #6d5bd8;
       --violet-soft: #ede9fe;
-      --line: #dce3ec;
-      --shadow: 0 18px 44px rgba(24, 39, 75, .10);
-      --shadow-soft: 0 8px 22px rgba(24, 39, 75, .08);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
-      --radius-md: 16px;
-      --radius-pill: 999px;
-      --max: 1180px;
-      --font: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --red: #dc5b4a;
+      --shadow: 0 14px 34px rgba(25, 39, 66, .10);
+      --radius: 22px;
+      --radius-sm: 16px;
+      --max: 1120px;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     html {
       scroll-behavior: smooth;
@@ -49,15 +37,18 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
       background:
-        linear-gradient(180deg, #f9fbff 0%, var(--bg) 44%, #eef3f8 100%);
+        radial-gradient(circle at 18% 0%, rgba(37, 99, 235, .10), transparent 30%),
+        radial-gradient(circle at 90% 12%, rgba(19, 151, 100, .10), transparent 30%),
+        var(--bg);
       color: var(--ink);
-      font-family: var(--font);
+      font-family: Inter, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
       letter-spacing: 0;
     }
 
-    button, textarea {
+    button,
+    input,
+    textarea {
       font: inherit;
     }
 
@@ -66,388 +57,162 @@
     }
 
     .app {
-      max-width: var(--max);
+      width: min(var(--max), 100%);
       margin: 0 auto;
-      padding: 28px 22px 44px;
+      padding: 18px 14px 92px;
     }
 
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
+      gap: 12px;
+      margin-bottom: 12px;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       min-width: 0;
     }
 
     .brand-mark {
-      width: 46px;
-      height: 46px;
-      border-radius: 17px;
+      width: 38px;
+      height: 38px;
       display: grid;
       place-items: center;
-      color: var(--blue);
-      background: linear-gradient(135deg, #ffffff 0%, var(--blue-soft) 100%);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .brand-mark svg,
-    .icon svg,
-    .nav-icon svg,
-    .badge-icon svg,
-    .empty-art svg {
-      width: 24px;
-      height: 24px;
-      stroke: currentColor;
-      stroke-width: 2.2;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .brand-title {
-      min-width: 0;
-    }
-
-    .brand-title strong {
-      display: block;
-      font-size: 18px;
-      line-height: 1.2;
-      font-weight: 900;
-    }
-
-    .brand-title span {
-      display: block;
-      margin-top: 3px;
-      color: var(--ink-2);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
       flex: 0 0 auto;
+      border-radius: 14px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 950;
     }
 
-    .mini-stat {
-      display: flex;
+    .brand strong {
+      display: block;
+      font-size: 16px;
+      line-height: 1.2;
+      font-weight: 950;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .login-btn,
+    .ghost-btn,
+    .primary-btn,
+    .secondary-btn,
+    .month-btn {
+      border: 0;
+      border-radius: 999px;
+      font-weight: 950;
+      line-height: 1;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    .login-btn {
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, .82);
+      gap: 7px;
+      padding: 11px 14px;
+      background: #fff;
       color: var(--ink);
-      font-size: 13px;
-      font-weight: 850;
-      box-shadow: 0 2px 10px rgba(24, 39, 75, .04);
+      box-shadow: 0 8px 20px rgba(25, 39, 66, .08);
+      border: 1px solid var(--line);
       white-space: nowrap;
     }
 
-    .auth-card {
+    .login-btn span {
+      width: 18px;
+      height: 18px;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 14px;
-      align-items: center;
-      margin-bottom: 18px;
-      padding: 14px 16px;
-      border: 1px solid rgba(220, 227, 236, .92);
-      border-radius: 22px;
-      background: rgba(255, 255, 255, .84);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .auth-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--ink);
-      font-size: 14px;
-      font-weight: 950;
-      line-height: 1.35;
-    }
-
-    .auth-title .dot {
-      width: 10px;
-      height: 10px;
+      place-items: center;
       border-radius: 50%;
-      background: var(--amber);
-      box-shadow: 0 0 0 5px var(--amber-soft);
-      flex: 0 0 auto;
-    }
-
-    .auth-title .dot.is-ready {
-      background: var(--green);
-      box-shadow: 0 0 0 5px var(--green-soft);
-    }
-
-    .auth-sub {
-      margin-top: 4px;
-      color: var(--ink-2);
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .auth-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    #googleSignIn {
-      min-width: 190px;
-    }
-
-    .small-btn {
-      min-height: 38px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-pill);
-      background: var(--surface);
-      color: var(--ink-2);
-      padding: 8px 12px;
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .mini-stat span {
-      color: var(--blue);
-      font-variant-numeric: tabular-nums;
+      background: linear-gradient(135deg, #4285f4, #34a853);
+      color: #fff;
+      font-size: 11px;
     }
 
     .hero {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      align-items: stretch;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .hero-main {
-      position: relative;
-      overflow: hidden;
-      padding: 30px;
-      border-radius: 32px;
-      background:
-        linear-gradient(135deg, #ffffff 0%, #eff6ff 48%, #edfdf6 100%);
+      margin-bottom: 14px;
+      padding: 20px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #ffffff 0%, #eff6ff 56%, #ecfdf5 100%);
       box-shadow: var(--shadow);
-      min-height: 230px;
-    }
-
-    .hero-main::after {
-      content: "";
-      position: absolute;
-      left: 30px;
-      right: 30px;
-      bottom: 24px;
-      height: 6px;
-      border-radius: var(--radius-pill);
-      background: linear-gradient(90deg, var(--blue) 0 64%, var(--green) 64% 82%, var(--line) 82% 100%);
-      opacity: .18;
     }
 
     .kicker {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 7px 12px;
-      border-radius: var(--radius-pill);
+      padding: 7px 10px;
+      border-radius: 999px;
       background: var(--blue-soft);
       color: var(--blue);
       font-size: 12px;
-      font-weight: 900;
+      font-weight: 950;
       line-height: 1;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .hero h1 {
-      max-width: 640px;
       margin: 0;
-      font-size: clamp(34px, 5vw, 56px);
-      line-height: 1.04;
+      font-size: clamp(28px, 9vw, 48px);
+      line-height: 1.05;
       font-weight: 950;
       letter-spacing: 0;
     }
 
     .hero p {
-      max-width: 560px;
-      margin: 14px 0 0;
-      color: var(--ink-2);
-      font-size: 16px;
-      line-height: 1.7;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
     }
 
-    .hero-visual {
-      min-height: 230px;
-      padding: 22px;
-      border-radius: 32px;
-      background: linear-gradient(135deg, #17202f 0%, #24344f 100%);
-      color: #ffffff;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .hero-visual::before {
-      content: "";
-      position: absolute;
-      inset: 18px;
-      border: 1px solid rgba(255, 255, 255, .12);
-      border-radius: 26px;
-      pointer-events: none;
-    }
-
-    .hero-status {
-      position: relative;
-      z-index: 1;
-      height: 100%;
-      min-height: 186px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 18px;
-    }
-
-    .hero-status-top,
-    .hero-status-grid {
+    .layout {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .hero-status-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .hero-status-top span,
-    .hero-status-grid span {
-      color: rgba(255, 255, 255, .66);
-      font-size: 12px;
-      font-weight: 850;
-      line-height: 1.35;
-    }
-
-    .hero-status-top strong {
-      padding: 8px 12px;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, .12);
-      font-size: 13px;
-      font-weight: 950;
-      white-space: nowrap;
-    }
-
-    .hero-status h2 {
-      margin: 0;
-      font-size: 28px;
-      line-height: 1.15;
-      font-weight: 950;
-      letter-spacing: 0;
-    }
-
-    .hero-status p {
-      margin: 8px 0 0;
-      color: rgba(255, 255, 255, .74);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .hero-meter {
-      height: 12px;
-      overflow: hidden;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, .14);
-    }
-
-    .hero-meter span {
-      display: block;
-      width: 8%;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, #60a5fa, #86efac);
-    }
-
-    .hero-status-grid div {
-      min-width: 0;
-      padding: 12px;
-      border: 1px solid rgba(255, 255, 255, .12);
-      border-radius: 18px;
-      background: rgba(255, 255, 255, .08);
-    }
-
-    .hero-status-grid strong {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 20px;
-      line-height: 1;
-      font-weight: 950;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .app-grid {
-      display: grid;
-      grid-template-columns: 260px minmax(0, 1fr) 300px;
-      gap: 18px;
-      align-items: stretch;
-    }
-
-    .left-column,
-    .center-column,
-    .right-column {
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .stretch-panel {
-      flex: 1;
+      gap: 14px;
     }
 
     .panel {
-      background: rgba(255, 255, 255, .92);
-      border: 1px solid rgba(220, 227, 236, .88);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-soft);
       overflow: hidden;
+      border: 1px solid rgba(220, 229, 239, .88);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .94);
+      box-shadow: var(--shadow);
     }
 
     .panel-pad {
-      padding: 20px;
+      padding: 16px;
     }
 
     .section-title {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 14px;
+      align-items: flex-start;
+      gap: 12px;
       margin-bottom: 14px;
     }
 
     .section-title h2 {
       margin: 0;
       font-size: 19px;
-      line-height: 1.25;
+      line-height: 1.2;
       font-weight: 950;
     }
 
     .section-title p {
-      margin: 4px 0 0;
-      color: var(--ink-2);
+      margin: 5px 0 0;
+      color: var(--muted);
       font-size: 13px;
       line-height: 1.45;
     }
@@ -455,958 +220,508 @@
     .pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 7px 10px;
-      border-radius: var(--radius-pill);
-      background: var(--surface-2);
-      color: var(--ink-2);
-      font-size: 12px;
-      font-weight: 850;
-      white-space: nowrap;
-    }
-
-    .pill.blue { background: var(--blue-soft); color: var(--blue); }
-    .pill.green { background: var(--green-soft); color: var(--green); }
-    .pill.amber { background: var(--amber-soft); color: var(--amber); }
-
-    .side-nav {
-      display: grid;
-      gap: 8px;
-    }
-
-    .nav-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px;
-      border: 0;
-      border-radius: 18px;
-      background: transparent;
-      color: var(--ink-2);
-      text-align: left;
-      font-weight: 850;
-    }
-
-    .nav-btn:hover,
-    .nav-btn.is-active {
-      background: var(--blue-soft);
-      color: var(--blue);
-    }
-
-    .nav-icon {
-      width: 34px;
-      height: 34px;
-      display: grid;
-      place-items: center;
-      border-radius: 13px;
-      background: rgba(255, 255, 255, .72);
-      flex: 0 0 auto;
-    }
-
-    .player-card {
-      margin-top: 16px;
-      padding: 16px;
-      border-radius: 22px;
-      background: linear-gradient(135deg, var(--ink) 0%, #26364f 100%);
-      color: #fff;
-    }
-
-    .player-card strong {
-      display: block;
-      font-size: 14px;
-      line-height: 1.35;
-    }
-
-    .player-card span {
-      display: block;
-      margin-top: 5px;
-      color: rgba(255, 255, 255, .72);
-      font-size: 12px;
-      line-height: 1.4;
-    }
-
-    .energy-track {
-      height: 10px;
-      margin-top: 12px;
-      overflow: hidden;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, .18);
-    }
-
-    .energy-fill {
-      display: block;
-      height: 100%;
-      width: 64%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, #67e8f9, #86efac);
-      transition: width .32s ease;
-    }
-
-    .mission-map {
-      display: grid;
-      gap: 10px;
-      max-height: 466px;
-      overflow-y: auto;
-      padding-right: 6px;
-      scrollbar-width: thin;
-      scrollbar-color: #bfd0e6 transparent;
-      overscroll-behavior: contain;
-    }
-
-    .mission-map::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .mission-map::-webkit-scrollbar-thumb {
-      border-radius: var(--radius-pill);
-      background: #bfd0e6;
-    }
-
-    .map-day {
-      position: relative;
-      display: grid;
-      grid-template-columns: 48px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: var(--surface);
-    }
-
-    .map-day::before {
-      content: "";
-      position: absolute;
-      left: 35px;
-      top: -14px;
-      width: 4px;
-      height: 14px;
-      background: var(--line);
-    }
-
-    .map-day:first-child::before {
-      display: none;
-    }
-
-    .day-node {
-      width: 48px;
-      height: 48px;
-      display: grid;
-      place-items: center;
-      border-radius: 17px;
-      background: var(--surface-3);
-      color: var(--ink-2);
-      font-size: 13px;
-      font-weight: 950;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .map-day.done .day-node {
-      background: var(--green-soft);
-      color: var(--green);
-    }
-
-    .map-day.today {
-      border-color: rgba(37, 99, 235, .35);
-      background: linear-gradient(135deg, #ffffff, #eff6ff);
-      box-shadow: 0 12px 24px rgba(37, 99, 235, .10);
-    }
-
-    .map-day.today .day-node {
-      background: var(--blue);
-      color: #fff;
-      box-shadow: 0 10px 20px rgba(37, 99, 235, .22);
-    }
-
-    .day-info {
-      min-width: 0;
-    }
-
-    .day-info strong {
-      display: block;
-      overflow: hidden;
-      color: var(--ink);
-      font-size: 14px;
-      line-height: 1.3;
-      font-weight: 900;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .day-info span {
-      display: block;
-      margin-top: 4px;
-      color: var(--ink-3);
-      font-size: 12px;
-      line-height: 1.35;
-    }
-
-    .day-reward {
-      color: var(--blue);
-      font-size: 12px;
-      font-weight: 950;
-      white-space: nowrap;
-    }
-
-    .quest-card {
-      padding: 24px;
-    }
-
-    .quest-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    .quest-title {
-      margin: 0;
-      font-size: clamp(25px, 3vw, 36px);
-      line-height: 1.12;
-      font-weight: 950;
-    }
-
-    .quest-copy {
-      margin: 10px 0 0;
-      color: var(--ink-2);
-      font-size: 15px;
-      line-height: 1.65;
-    }
-
-    .level-badge {
-      flex: 0 0 auto;
-      width: 76px;
-      height: 76px;
-      display: grid;
-      place-items: center;
-      border-radius: 26px;
-      background: linear-gradient(135deg, var(--blue), var(--violet));
-      color: #fff;
-      box-shadow: 0 14px 26px rgba(37, 99, 235, .22);
-      text-align: center;
-      font-weight: 950;
-      line-height: 1.05;
-    }
-
-    .level-badge small {
-      display: block;
-      opacity: .78;
-      font-size: 10px;
-      font-weight: 900;
-    }
-
-    .quest-stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .stat-card {
-      padding: 14px;
-      border-radius: 18px;
-      background: var(--surface-2);
-      min-width: 0;
-    }
-
-    .stat-card strong {
-      display: block;
-      color: var(--ink);
-      font-size: 22px;
-      line-height: 1;
-      font-weight: 950;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .stat-card span {
-      display: block;
-      margin-top: 7px;
-      color: var(--ink-2);
-      font-size: 12px;
-      line-height: 1.25;
-      font-weight: 850;
-    }
-
-    .task-card {
-      display: grid;
-      grid-template-columns: 72px minmax(0, 1fr);
-      gap: 16px;
-      align-items: center;
-      padding: 18px;
-      border-radius: 24px;
-      background: linear-gradient(135deg, #f8fbff 0%, #edf6ff 100%);
-      border: 1px solid rgba(37, 99, 235, .12);
-      margin-bottom: 16px;
-    }
-
-    .task-symbol {
-      width: 72px;
-      height: 72px;
-      display: grid;
-      place-items: center;
-      border-radius: 26px;
-      background: #fff;
-      color: var(--blue);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .task-symbol svg {
-      width: 36px;
-      height: 36px;
-      stroke: currentColor;
-      stroke-width: 2;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .task-card h3 {
-      margin: 0;
-      color: var(--ink);
-      font-size: 22px;
-      line-height: 1.25;
-      font-weight: 950;
-    }
-
-    .task-card p {
-      margin: 8px 0 0;
-      color: var(--ink-2);
-      font-size: 14px;
-      line-height: 1.55;
-    }
-
-    .checkin-grid {
-      display: grid;
-      grid-template-columns: .92fr 1.08fr;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .upload-card {
-      min-height: 174px;
-      display: grid;
-      place-items: center;
-      padding: 18px;
-      border: 2px dashed #c9d7e8;
-      border-radius: 24px;
-      background: #fbfdff;
-      color: var(--ink-2);
-      text-align: center;
-      cursor: pointer;
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
-    }
-
-    .upload-card:hover,
-    .upload-card.has-photo {
-      transform: translateY(-1px);
-      border-color: var(--blue);
-      background: #f8fbff;
-    }
-
-    .upload-card svg {
-      width: 42px;
-      height: 42px;
-      margin-bottom: 10px;
-      color: var(--blue);
-      stroke: currentColor;
-      stroke-width: 2;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .upload-card strong {
-      display: block;
-      color: var(--ink);
-      font-size: 15px;
-      font-weight: 950;
-    }
-
-    .upload-card span {
-      display: block;
-      margin-top: 5px;
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .upload-preview {
-      width: min(100%, 220px);
-      aspect-ratio: 4 / 3;
-      object-fit: cover;
-      display: none;
-      margin: 0 auto 12px;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      background: var(--surface-2);
-    }
-
-    .upload-card.has-photo .upload-preview {
-      display: block;
-    }
-
-    .upload-card.has-photo svg {
-      display: none;
-    }
-
-    .reflection {
-      width: 100%;
-      min-height: 174px;
-      resize: none;
-      border: 1px solid var(--line);
-      outline: none;
-      border-radius: 24px;
-      background: #fff;
-      color: var(--ink);
-      padding: 18px;
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    .primary-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .btn-primary,
-    .btn-secondary {
-      min-height: 48px;
-      display: inline-flex;
-      align-items: center;
       justify-content: center;
-      gap: 8px;
-      border-radius: var(--radius-pill);
-      border: 0;
-      padding: 13px 20px;
-      font-size: 15px;
+      min-height: 28px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
       font-weight: 950;
-      transition: transform .16s ease, background-color .16s ease, box-shadow .16s ease;
+      white-space: nowrap;
     }
 
-    .btn-primary {
-      background: var(--blue);
-      color: #fff;
-      box-shadow: 0 12px 24px rgba(37, 99, 235, .18);
+    .pill.blue {
+      background: var(--blue-soft);
+      color: var(--blue);
     }
 
-    .btn-primary:hover {
-      background: #1e4fd3;
-    }
-
-    .btn-secondary {
-      background: var(--surface-2);
-      color: var(--ink);
-    }
-
-    .btn-primary:active,
-    .btn-secondary:active,
-    .nav-btn:active,
-    .bottom-tab:active {
-      transform: scale(.97);
-    }
-
-    .coach-card {
-      display: none;
-      margin-top: 16px;
-      padding: 18px;
-      border-radius: 24px;
-      background: linear-gradient(135deg, #ffffff, #edfff6);
-      border: 1px solid rgba(21, 154, 106, .20);
-    }
-
-    .coach-card.is-visible {
-      display: block;
-    }
-
-    .coach-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .coach-card h3 {
-      margin: 0 0 6px;
-      color: var(--ink);
-      font-size: 19px;
-      line-height: 1.3;
-      font-weight: 950;
-    }
-
-    .coach-card p {
-      margin: 0;
-      color: var(--ink-2);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .score-ring {
-      flex: 0 0 auto;
-      width: 76px;
-      height: 76px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background:
-        radial-gradient(circle, #fff 0 54%, transparent 55%),
-        conic-gradient(var(--green) 0 92%, var(--line) 92% 100%);
+    .pill.green {
+      background: var(--green-soft);
       color: var(--green);
-      font-size: 20px;
-      font-weight: 950;
-      font-variant-numeric: tabular-nums;
     }
 
-    .reward-row {
+    .wish-card {
+      display: grid;
+      gap: 14px;
+      background: linear-gradient(135deg, #172033 0%, #243855 100%);
+      color: #fff;
+    }
+
+    .wish-copy span {
+      color: rgba(255, 255, 255, .68);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .wish-copy h2 {
+      margin: 6px 0 0;
+      font-size: 24px;
+      line-height: 1.18;
+      font-weight: 950;
+    }
+
+    .wish-stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 14px;
+      gap: 8px;
     }
 
-    .reward {
-      padding: 12px;
-      border-radius: 18px;
-      background: #fff;
-      border: 1px solid var(--line);
+    .wish-stat {
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, .14);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .08);
     }
 
-    .reward strong {
+    .wish-stat strong {
       display: block;
-      color: var(--ink);
-      font-size: 18px;
+      font-size: 20px;
       line-height: 1;
       font-weight: 950;
     }
 
-    .reward span {
+    .wish-stat span {
       display: block;
-      margin-top: 6px;
-      color: var(--ink-2);
-      font-size: 12px;
+      margin-top: 5px;
+      color: rgba(255, 255, 255, .70);
+      font-size: 11px;
       line-height: 1.25;
       font-weight: 850;
     }
 
-    .leader-list,
-    .badge-grid,
-    .history-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .leader-row {
-      display: grid;
-      grid-template-columns: 36px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 10px;
-      padding: 12px;
-      border-radius: 18px;
-      background: var(--surface);
-      border: 1px solid var(--line);
-    }
-
-    .rank {
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      border-radius: 13px;
-      background: var(--amber-soft);
-      color: var(--amber);
-      font-weight: 950;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .leader-row strong,
-    .history-item strong {
-      display: block;
+    .progress-track {
+      height: 10px;
       overflow: hidden;
-      color: var(--ink);
-      font-size: 14px;
-      line-height: 1.3;
-      font-weight: 950;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .16);
     }
 
-    .leader-row span,
-    .history-item span {
+    .progress-track span {
       display: block;
-      margin-top: 4px;
-      color: var(--ink-2);
-      font-size: 12px;
-      line-height: 1.35;
+      width: 38%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #60a5fa, #86efac);
+      transition: width .25s ease;
     }
 
-    .leader-score {
-      color: var(--blue);
-      font-size: 13px;
-      font-weight: 950;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
+    .month-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
-    .badge-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .badge-card {
-      min-height: 98px;
-      display: grid;
-      align-content: center;
-      justify-items: center;
-      gap: 7px;
-      padding: 12px 8px;
-      border-radius: 20px;
-      background: var(--surface);
-      border: 1px solid var(--line);
+    .month-title {
       text-align: center;
+      min-width: 0;
     }
 
-    .badge-icon {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border-radius: 16px;
-      color: var(--blue);
-      background: var(--blue-soft);
-    }
-
-    .badge-card:nth-child(2) .badge-icon {
-      color: var(--green);
-      background: var(--green-soft);
-    }
-
-    .badge-card:nth-child(3) .badge-icon {
-      color: var(--amber);
-      background: var(--amber-soft);
-    }
-
-    .badge-card strong {
+    .month-title strong {
       display: block;
-      color: var(--ink);
-      font-size: 12px;
+      font-size: 18px;
       line-height: 1.2;
       font-weight: 950;
     }
 
-    .book-card {
-      margin-top: 18px;
-      padding: 18px;
-      border-radius: 24px;
-      background: linear-gradient(135deg, var(--ink) 0%, #26364f 100%);
-      color: #fff;
+    .month-title span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
     }
 
-    .book-card strong {
-      display: block;
-      font-size: 18px;
-      line-height: 1.25;
+    .month-btn {
+      width: 40px;
+      height: 40px;
+      background: var(--surface-2);
+      color: var(--ink);
+      font-size: 22px;
+    }
+
+    .week-row,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 7px;
+    }
+
+    .week-row {
+      margin-bottom: 7px;
+    }
+
+    .week-row span {
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
       font-weight: 950;
     }
 
-    .book-card p {
-      margin: 9px 0 14px;
-      color: rgba(255, 255, 255, .78);
+    .day-cell {
+      min-width: 0;
+      min-height: 48px;
+      padding: 6px 4px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--ink);
       font-size: 13px;
+      font-weight: 950;
+    }
+
+    .day-cell[disabled] {
+      cursor: default;
+      opacity: .28;
+    }
+
+    .day-cell.is-complete {
+      background: var(--green-soft);
+      border-color: #a7f3d0;
+      color: var(--green);
+    }
+
+    .day-cell.is-today {
+      border-color: rgba(37, 99, 235, .45);
+      box-shadow: inset 0 0 0 2px rgba(37, 99, 235, .12);
+    }
+
+    .day-cell.is-selected {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+      box-shadow: 0 10px 18px rgba(37, 99, 235, .25);
+    }
+
+    .day-cell small {
+      display: block;
+      margin-top: 2px;
+      overflow: hidden;
+      font-size: 9px;
+      line-height: 1.1;
+      font-weight: 850;
+      opacity: .7;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mission-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mission-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .mission-top h2 {
+      margin: 6px 0 0;
+      font-size: 25px;
+      line-height: 1.12;
+      font-weight: 950;
+    }
+
+    .day-badge {
+      width: 60px;
+      height: 60px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 20px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 950;
+      box-shadow: 0 12px 22px rgba(37, 99, 235, .24);
+    }
+
+    .step-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .step-list li {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      align-items: center;
+      gap: 9px;
+      padding: 10px;
+      border-radius: 15px;
+      background: var(--surface-2);
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .step-list b {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: #fff;
+      color: var(--blue);
+      font-size: 12px;
+    }
+
+    .proof-card {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 2px dashed #c9d7e8;
+      border-radius: 18px;
+      background: #fbfdff;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .proof-card.has-photo {
+      border-color: var(--blue);
+      background: #f8fbff;
+    }
+
+    .photo-preview {
+      display: none;
+      width: 100%;
+      max-height: 210px;
+      object-fit: cover;
+      border-radius: 15px;
+      border: 1px solid var(--line);
+    }
+
+    .proof-card.has-photo .photo-preview {
+      display: block;
+    }
+
+    .proof-card strong {
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 950;
+    }
+
+    .proof-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      min-height: 50px;
+      padding: 0 18px;
+      font-size: 15px;
+    }
+
+    .primary-btn {
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 12px 22px rgba(37, 99, 235, .22);
+    }
+
+    .secondary-btn {
+      background: var(--surface-2);
+      color: var(--ink);
+    }
+
+    .advanced-panel {
+      display: none;
+      gap: 12px;
+      padding: 16px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, var(--violet-soft), #ffffff);
+      border: 1px solid #ddd6fe;
+    }
+
+    .advanced-panel.is-visible {
+      display: grid;
+    }
+
+    .advanced-panel h2 {
+      margin: 0;
+      font-size: 19px;
+      font-weight: 950;
+    }
+
+    .advanced-panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
       line-height: 1.55;
     }
 
-    .book-progress {
-      height: 9px;
-      overflow: hidden;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 255, 255, .16);
+    .reflection-input {
+      min-height: 116px;
+      resize: vertical;
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      outline: none;
+      background: #fff;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.55;
     }
 
-    .book-progress span {
-      display: block;
-      width: 7%;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, #93c5fd, #86efac);
+    .reflection-meter {
+      display: grid;
+      gap: 7px;
     }
 
-    .history-item {
+    .reflection-meter strong {
+      color: var(--violet);
+      font-size: 14px;
+      font-weight: 950;
+    }
+
+    .reflection-meter span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .journey-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .journey-item {
       display: grid;
       grid-template-columns: 42px minmax(0, 1fr) auto;
       align-items: center;
       gap: 10px;
-      padding: 12px;
-      border-radius: 18px;
-      background: var(--surface);
-      border: 1px solid var(--line);
+      padding: 10px;
+      border-radius: 16px;
+      background: var(--surface-2);
     }
 
-    .history-dot {
+    .journey-dot {
       width: 42px;
       height: 42px;
       display: grid;
       place-items: center;
       border-radius: 15px;
-      background: var(--green-soft);
-      color: var(--green);
+      background: #fff;
+      color: var(--blue);
       font-size: 12px;
       font-weight: 950;
     }
 
-    .status-tag {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 5px 9px;
-      border-radius: var(--radius-pill);
-      background: var(--green-soft);
-      color: var(--green);
-      font-size: 11px;
+    .journey-item strong {
+      display: block;
+      overflow: hidden;
+      color: var(--ink);
+      font-size: 13px;
       font-weight: 950;
       white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
-    .empty-art {
-      display: grid;
-      grid-template-columns: 58px minmax(0, 1fr);
-      gap: 14px;
-      align-items: center;
-      padding: 16px;
-      border-radius: 22px;
-      background: var(--violet-soft);
-      color: var(--violet);
-      margin-top: 16px;
-    }
-
-    .empty-art .art-box {
-      width: 58px;
-      height: 58px;
-      display: grid;
-      place-items: center;
-      border-radius: 20px;
-      background: #fff;
-    }
-
-    .empty-art strong {
+    .journey-item span {
       display: block;
-      color: var(--ink);
-      font-size: 14px;
-      line-height: 1.35;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      z-index: 30;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      padding: 8px;
+      border: 1px solid rgba(220, 229, 239, .9);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, .94);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .bottom-nav button {
+      min-height: 50px;
+      border: 0;
+      border-radius: 17px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
       font-weight: 950;
     }
 
-    .empty-art span {
-      display: block;
-      margin-top: 4px;
-      color: var(--ink-2);
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .mobile-bottom-nav {
-      display: none;
+    .bottom-nav button.is-active {
+      background: var(--blue-soft);
+      color: var(--blue);
     }
 
     .toast {
       position: fixed;
       left: 50%;
-      bottom: 24px;
-      z-index: 50;
+      bottom: 84px;
+      z-index: 60;
       display: none;
-      width: min(420px, calc(100vw - 32px));
+      width: min(420px, calc(100vw - 28px));
       transform: translateX(-50%);
       padding: 13px 16px;
       border-radius: 18px;
-      background: rgba(23, 32, 47, .95);
+      background: rgba(23, 32, 51, .96);
       color: #fff;
-      box-shadow: var(--shadow);
+      text-align: center;
       font-size: 14px;
       line-height: 1.45;
-      text-align: center;
+      box-shadow: var(--shadow);
     }
 
     .toast.is-visible {
       display: block;
     }
 
-    @media (max-width: 980px) {
-      .hero {
-        grid-template-columns: 1fr;
-      }
-
-      .app-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .left-column,
-      .right-column {
-        display: contents;
-      }
-
-      .side-nav {
-        display: none;
-      }
-
-      .player-card {
-        display: none;
-      }
-
-      .quest-stats,
-      .checkin-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 720px) {
-      body {
-        background: var(--bg);
-      }
-
+    @media (min-width: 820px) {
       .app {
-        padding: 18px 14px 108px;
+        padding: 24px 22px 36px;
       }
 
-      .topbar {
-        align-items: flex-start;
-      }
-
-      .brand-title span {
-        display: none;
-      }
-
-      .top-actions .mini-stat:nth-child(2) {
-        display: none;
-      }
-
-      .auth-card {
-        grid-template-columns: 1fr;
-      }
-
-      .auth-actions {
-        justify-content: flex-start;
+      .layout {
+        grid-template-columns: .95fr 1.05fr;
+        align-items: start;
       }
 
       .hero {
-        gap: 14px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        gap: 20px;
       }
 
-      .hero-main,
-      .hero-visual {
-        border-radius: 28px;
-        min-height: auto;
+      .actions {
+        grid-template-columns: auto auto;
+        justify-content: start;
       }
 
-      .hero-main {
-        padding: 24px;
-      }
-
-      .hero-main::after {
+      .bottom-nav {
         display: none;
       }
 
-      .hero h1 {
-        font-size: 34px;
-      }
-
-      .hero p {
-        font-size: 15px;
-      }
-
-      .hero-visual {
-        min-height: 210px;
-      }
-
-      .panel {
-        border-radius: 24px;
-      }
-
-      .panel-pad,
-      .quest-card {
-        padding: 18px;
-      }
-
-      .quest-header {
-        display: block;
-      }
-
-      .level-badge {
-        margin-top: 14px;
-        width: auto;
-        height: auto;
-        min-height: 52px;
-        display: inline-grid;
-        grid-auto-flow: column;
-        gap: 8px;
-        padding: 12px 16px;
-        border-radius: var(--radius-pill);
-      }
-
-      .quest-stats,
-      .checkin-grid,
-      .reward-row {
-        grid-template-columns: 1fr;
-      }
-
-      .task-card {
-        grid-template-columns: 1fr;
-      }
-
-      .badge-grid {
-        grid-template-columns: 1fr 1fr 1fr;
-      }
-
-      .mobile-bottom-nav {
-        position: fixed;
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
-        z-index: 30;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 6px;
-        padding: 8px;
-        border: 1px solid rgba(220, 227, 236, .9);
-        border-radius: 24px;
-        background: rgba(255, 255, 255, .94);
-        box-shadow: var(--shadow);
-        backdrop-filter: blur(16px);
-      }
-
-      .bottom-tab {
-        min-height: 52px;
-        display: grid;
-        place-items: center;
-        gap: 2px;
-        border: 0;
-        border-radius: 18px;
-        background: transparent;
-        color: var(--ink-3);
-        font-size: 11px;
-        font-weight: 950;
-      }
-
-      .bottom-tab svg {
-        width: 22px;
-        height: 22px;
-        stroke: currentColor;
-        stroke-width: 2.2;
-        fill: none;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
-
-      .bottom-tab.is-active {
-        background: var(--blue-soft);
-        color: var(--blue);
+      .toast {
+        bottom: 24px;
       }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      * {
-        animation: none !important;
-        transition: none !important;
-        scroll-behavior: auto !important;
+    @media (min-width: 1080px) {
+      .layout {
+        grid-template-columns: 360px minmax(0, 1fr) 290px;
       }
     }
   </style>
@@ -1415,629 +730,455 @@
   <div class="app">
     <header class="topbar">
       <div class="brand">
-        <div class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path><path d="M7.5 7.5 16.5 16.5"></path><path d="M16.5 7.5 7.5 16.5"></path></svg>
-        </div>
-        <div class="brand-title">
+        <div class="brand-mark">一</div>
+        <div>
           <strong>每日一小步</strong>
-          <span>小任務打卡、AI 回饋、成長作品集</span>
+          <span>月曆任務、照片打卡、年度成長書</span>
         </div>
       </div>
-      <div class="top-actions" aria-label="今日狀態">
-        <div class="mini-stat">連續 <span id="streakMini">8</span> 天</div>
-        <div class="mini-stat">能量 <span id="energyMini">64</span>%</div>
-      </div>
+      <button class="login-btn" id="googleLoginBtn" type="button"><span>G</span>登入 Google 帳號</button>
     </header>
 
-    <section class="auth-card" aria-label="Google 登入與後台同步">
+    <section class="hero" id="today">
       <div>
-        <div class="auth-title">
-          <span class="dot" id="syncDot"></span>
-          <span id="authTitle">尚未連接 Google 後台</span>
-        </div>
-        <div class="auth-sub" id="authSub">前台已可放 GitHub Pages；填入 Google client id 與 GAS URL 後，資料會寫進你的 Google Sheets / Drive。</div>
+        <div class="kicker">前端試用模式</div>
+        <h1>每天解鎖一個小任務。</h1>
+        <p>用月曆選日期，完成今天的小行動，拍下證明，再寫出一段能留下來的感受。</p>
       </div>
-      <div class="auth-actions">
-        <div id="googleSignIn"></div>
-        <button class="small-btn" type="button" id="signOutBtn" hidden>登出</button>
-        <button class="small-btn" type="button" id="syncBtn">同步榜單</button>
-      </div>
+      <span class="pill blue" id="heroDayLabel">Day 1 / 365</span>
     </section>
 
-    <section class="hero" id="overview">
-      <div class="hero-main">
-        <div class="kicker">今日冒險已開放</div>
-        <h1>把真實生活，變成每天都能完成的小任務。</h1>
-        <p>不是逼孩子立刻找到夢想，而是用小到做得到的行動，累積成就感、照片證據、AI 教練回饋，最後整理成一本看得見的成長小書。</p>
-      </div>
-      <div class="hero-visual" aria-label="365 天任務進度">
-        <div class="hero-status">
-          <div class="hero-status-top">
-            <span>365 天任務卷軸</span>
-            <strong>Day 8 / 365</strong>
-          </div>
+    <main class="layout">
+      <section class="panel panel-pad wish-card" id="wish">
+        <div class="wish-copy">
+          <span id="wishMonth">7 月｜補水挑戰</span>
+          <h2 id="wishTitle">讓身體醒過來</h2>
+        </div>
+        <div class="wish-stats">
+          <div class="wish-stat"><strong id="monthDoneCount">0</strong><span>本月完成</span></div>
+          <div class="wish-stat"><strong id="streakCount">0</strong><span>連續天數</span></div>
+          <div class="wish-stat"><strong id="badgeRemain">21</strong><span>徽章還差</span></div>
+        </div>
+        <div class="progress-track" aria-label="本月願望進度"><span id="wishProgress"></span></div>
+      </section>
+
+      <section class="panel panel-pad" id="calendar">
+        <div class="section-title">
           <div>
-            <h2>每天只解鎖一個很小的現實任務。</h2>
-            <p>Rick 試用版會先看見前端體驗：任務可上下滾動、照片可選擇或拍攝，完成後會留下作品集感。</p>
+            <h2>月曆任務地圖</h2>
+            <p>點日期，切換當天任務。</p>
           </div>
-          <div class="hero-meter" aria-label="年度任務進度 8 / 365"><span></span></div>
-          <div class="hero-status-grid">
-            <div><strong>365</strong><span>全年任務</span></div>
-            <div><strong>8</strong><span>目前進度</span></div>
-            <div><strong>120</strong><span>成書門檻</span></div>
-          </div>
+          <span class="pill green" id="monthBadge">月徽章</span>
         </div>
-      </div>
-    </section>
 
-    <main class="app-grid">
-      <aside class="left-column">
-        <section class="panel panel-pad">
-          <nav class="side-nav" aria-label="主要區塊">
-            <button class="nav-btn is-active" type="button" data-jump="overview">
-              <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7"></path><path d="M6 10v10h12V10"></path></svg></span>
-              <span>今日總覽</span>
-            </button>
-            <button class="nav-btn" type="button" data-jump="map">
-              <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 19c4-8 10-8 14 0"></path><path d="M6 7h.01M12 4h.01M18 7h.01"></path></svg></span>
-              <span>任務地圖</span>
-            </button>
-            <button class="nav-btn" type="button" data-jump="checkin">
-              <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-5"></path><path d="M4 5h16v14H4z"></path></svg></span>
-              <span>我要打卡</span>
-            </button>
-            <button class="nav-btn" type="button" data-jump="rankings">
-              <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"></path><path d="M5 6H3v2a4 4 0 0 0 4 4M19 6h2v2a4 4 0 0 1-4 4"></path></svg></span>
-              <span>排行榜</span>
-            </button>
-          </nav>
-          <div class="player-card">
-            <strong>今日節奏</strong>
-            <span>完成一個任務就好。系統會把你的照片與反思收進成長歷程。</span>
-            <div class="energy-track" aria-label="能量 64%">
-              <span class="energy-fill" id="energyFill"></span>
-            </div>
+        <div class="month-header">
+          <button class="month-btn" id="prevMonth" type="button" aria-label="上一個月">‹</button>
+          <div class="month-title">
+            <strong id="monthTitle">2026 年 7 月</strong>
+            <span id="monthSubtitle">補水挑戰</span>
           </div>
-        </section>
+          <button class="month-btn" id="nextMonth" type="button" aria-label="下一個月">›</button>
+        </div>
 
-        <section class="panel panel-pad stretch-panel" id="map">
-          <div class="section-title">
-            <div>
-              <h2>任務地圖</h2>
-              <p>365 天每天一格，可上下滾動查看全年路線。</p>
-            </div>
-            <span class="pill blue">365 天</span>
+        <div class="week-row" aria-hidden="true">
+          <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid" aria-label="任務月曆"></div>
+      </section>
+
+      <section class="panel panel-pad mission-card" id="mission">
+        <div class="mission-top">
+          <div>
+            <div class="kicker">今天的小任務</div>
+            <h2 id="missionTitle">喝一杯水，拍下你的杯子</h2>
           </div>
+          <div class="day-badge" id="dayBadge">D001</div>
+        </div>
 
-          <div class="mission-map" id="missionMap" aria-label="365 天任務列表"></div>
-        </section>
-      </aside>
+        <ul class="step-list" id="missionSteps"></ul>
 
-      <section class="center-column">
-        <article class="panel quest-card" id="checkin">
-          <div class="quest-header">
-            <div>
-              <div class="kicker">今日任務</div>
-              <h2 class="quest-title">喝一杯水，拍下你的杯子</h2>
-              <p class="quest-copy">任務很小，但它訓練的是「開始、完成、留下證據」。完成後 AI 只會評估行動證據，不評價這個人好不好。</p>
-            </div>
-            <div class="level-badge"><small>LEVEL</small>3</div>
+        <label class="proof-card" id="proofCard" for="photoInput">
+          <img class="photo-preview" id="photoPreview" alt="完成照片預覽">
+          <strong id="photoTitle">拍下完成證明</strong>
+          <span id="photoHint">手機可拍照，電腦可選圖片。</span>
+          <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
+        </label>
+
+        <div class="actions">
+          <button class="primary-btn" id="completeBtn" type="button">完成任務</button>
+          <button class="secondary-btn" id="advancedJumpBtn" type="button">完成後解鎖進階挑戰</button>
+        </div>
+
+        <section class="advanced-panel" id="advancedPanel" aria-live="polite">
+          <div>
+            <h2>寫下今天的感受</h2>
+            <p id="advancedPrompt">今天喝完水後，身體有什麼變化？請描述精神、口渴感、專注力、心情，或身體感覺。</p>
           </div>
-
-          <div class="quest-stats" aria-label="今日數據">
-            <div class="stat-card"><strong id="checkinCount">239</strong><span>已打卡</span></div>
-            <div class="stat-card"><strong id="xpCount">162</strong><span>成長積分</span></div>
-            <div class="stat-card"><strong id="energyCount">64</strong><span>能量值</span></div>
-            <div class="stat-card"><strong>27%</strong><span>小書進度</span></div>
-          </div>
-
-          <div class="task-card">
-            <div class="task-symbol" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M8 4h8l-1 5H9L8 4Z"></path><path d="M9 9h6l1 10H8L9 9Z"></path><path d="M10 13h4"></path></svg>
-            </div>
-            <div>
-              <h3>完成條件</h3>
-              <p>照片中看得到水杯或水壺，再寫一句喝完水後的感覺。滿分不是重點，願意完成才是核心。</p>
-            </div>
-          </div>
-
-          <div class="checkin-grid">
-            <label class="upload-card" id="uploadCard" for="photoInput">
-              <div>
-                <img class="upload-preview" id="photoPreview" alt="打卡照片預覽">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17V7a2 2 0 0 1 2-2h3l2 3h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path><path d="m8 15 3-3 2 2 2-3 3 4"></path></svg>
-                <strong id="photoTitle">加入完成照片</strong>
-                <span id="photoHint">手機可直接拍照，電腦可選擇圖片；送出後會存到站主 Google Drive。</span>
-                <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
-              </div>
-            </label>
-            <textarea class="reflection" id="reflection">我下午比較有精神，也發現自己其實可以把小事做完。</textarea>
-          </div>
-
-          <div class="primary-actions">
-            <button class="btn-primary" id="completeBtn" type="button">完成今日冒險</button>
-            <button class="btn-secondary" type="button" data-jump="map">看任務地圖</button>
-          </div>
-
-          <div class="coach-card" id="coachCard" aria-live="polite">
-            <div class="coach-top">
-              <div>
-                <h3>AI 教練回饋</h3>
-                <p>你有完成照片、具體行動和一句反思。今天的目標不是追求完美，而是把一件小事完整收尾。</p>
-              </div>
-              <div class="score-ring">92</div>
-            </div>
-            <div class="reward-row">
-              <div class="reward"><strong>+20</strong><span>能量</span></div>
-              <div class="reward"><strong>+30</strong><span>成長積分</span></div>
-              <div class="reward"><strong>D9</strong><span>明日解鎖</span></div>
-            </div>
-          </div>
-        </article>
-
-        <section class="panel panel-pad stretch-panel" id="progress">
-          <div class="section-title">
-            <div>
-              <h2>我的歷程</h2>
-              <p>這些紀錄未來可以整理成一本小書。</p>
-            </div>
-            <span class="pill green">8 天</span>
-          </div>
-          <div class="history-list">
-            <article class="history-item">
-              <div class="history-dot">D8</div>
-              <div><strong>喝一杯水並拍照</strong><span id="historyState">尚未完成今日打卡</span></div>
-              <span class="status-tag" id="historyTag">待完成</span>
-            </article>
-            <article class="history-item">
-              <div class="history-dot">D7</div>
-              <div><strong>對一個人說謝謝</strong><span>已完成，AI 回饋 90 分</span></div>
-              <span class="status-tag">完成</span>
-            </article>
-            <article class="history-item">
-              <div class="history-dot">D6</div>
-              <div><strong>整理桌面 3 分鐘</strong><span>已完成，AI 回饋 88 分</span></div>
-              <span class="status-tag">完成</span>
-            </article>
+          <textarea class="reflection-input" id="reflectionInput" placeholder="請寫完整一點，這會成為你的成長書素材。"></textarea>
+          <div class="reflection-meter">
+            <strong id="reflectionScore">目前 0 分</strong>
+            <span id="reflectionHint">至少 20 字才開始計分；60 字以上且具體，分數會更高。</span>
           </div>
         </section>
       </section>
 
-      <aside class="right-column">
-        <section class="panel panel-pad" id="rankings">
-          <div class="section-title">
-            <div>
-              <h2>排行榜</h2>
-              <p>先看任務內完成度，不做全站壓力榜。</p>
-            </div>
-            <span class="pill amber">新手榜</span>
+      <aside class="panel panel-pad" id="journey">
+        <div class="section-title">
+          <div>
+            <h2>歷程</h2>
+            <p>照片與感受會成為年度書素材。</p>
           </div>
-          <div class="leader-list">
-            <article class="leader-row">
-              <div class="rank">1</div>
-              <div><strong>小可</strong><span>連續 8 天，反思完整</span></div>
-              <div class="leader-score">92</div>
-            </article>
-            <article class="leader-row">
-              <div class="rank">2</div>
-              <div><strong>阿晨</strong><span>照片清楚，完成穩定</span></div>
-              <div class="leader-score">88</div>
-            </article>
-            <article class="leader-row">
-              <div class="rank">3</div>
-              <div><strong>小宇</strong><span>今天第一次加入</span></div>
-              <div class="leader-score">84</div>
-            </article>
-          </div>
-        </section>
-
-        <section class="panel panel-pad stretch-panel">
-          <div class="section-title">
-            <div>
-              <h2>徽章</h2>
-              <p>獎勵的是持續，不是誰最厲害。</p>
-            </div>
-          </div>
-          <div class="badge-grid">
-            <article class="badge-card">
-              <div class="badge-icon"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.3 6.8 19l1-5.8L3.6 9.1l5.8-.8L12 3Z"></path></svg></div>
-              <strong>開始者</strong>
-            </article>
-            <article class="badge-card">
-              <div class="badge-icon"><svg viewBox="0 0 24 24"><path d="M12 20V4"></path><path d="M5 11l7-7 7 7"></path><path d="M5 20h14"></path></svg></div>
-              <strong>連續 7 天</strong>
-            </article>
-            <article class="badge-card">
-              <div class="badge-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-1.5Z"></path><path d="M8 7h6M8 11h5"></path></svg></div>
-              <strong>小書種子</strong>
-            </article>
-          </div>
-
-          <div class="book-card">
-            <strong>解鎖成長小書</strong>
-            <p>不是 30 天就能出書。需完成 120 天任務、90 次有效照片打卡、30 篇深度反思，才開放 AI 整理成書。</p>
-            <div class="book-progress" aria-label="小書進度 7%"><span></span></div>
-          </div>
-
-          <div class="empty-art">
-            <div class="art-box"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></div>
-            <div><strong>商業模式藏在高品質歷程裡</strong><span>免費養成習慣；達標後才解鎖作品整理、顧問諮詢或出書服務。</span></div>
-          </div>
-        </section>
+          <span class="pill blue">一年</span>
+        </div>
+        <div class="journey-list" id="journeyList"></div>
       </aside>
     </main>
   </div>
 
-  <nav class="mobile-bottom-nav" aria-label="手機導覽">
-    <button class="bottom-tab is-active" type="button" data-jump="overview">
-      <svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7"></path><path d="M6 10v10h12V10"></path></svg>
-      <span>首頁</span>
-    </button>
-    <button class="bottom-tab" type="button" data-jump="map">
-      <svg viewBox="0 0 24 24"><path d="M5 19c4-8 10-8 14 0"></path><path d="M6 7h.01M12 4h.01M18 7h.01"></path></svg>
-      <span>地圖</span>
-    </button>
-    <button class="bottom-tab" type="button" data-jump="checkin">
-      <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-5"></path><path d="M4 5h16v14H4z"></path></svg>
-      <span>打卡</span>
-    </button>
-    <button class="bottom-tab" type="button" data-jump="rankings">
-      <svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"></path><path d="M5 6H3v2a4 4 0 0 0 4 4M19 6h2v2a4 4 0 0 1-4 4"></path></svg>
-      <span>榜單</span>
-    </button>
+  <nav class="bottom-nav" aria-label="手機導覽">
+    <button class="is-active" type="button" data-jump="today">今日</button>
+    <button type="button" data-jump="calendar">月曆</button>
+    <button type="button" data-jump="wish">願望</button>
+    <button type="button" data-jump="journey">歷程</button>
   </nav>
 
-  <form id="gasPostForm" method="post" target="gasPostFrame" hidden>
-    <input type="hidden" name="action" id="gasAction">
-    <input type="hidden" name="credential" id="gasCredential">
-    <input type="hidden" name="payload" id="gasPayload">
-  </form>
-  <iframe name="gasPostFrame" id="gasPostFrame" title="GAS submission frame" hidden></iframe>
-
-  <div class="toast" id="toast">已完成今日冒險</div>
+  <div class="toast" id="toast"></div>
 
   <script>
-    const config = window.DAILY_MISSION_CONFIG || {};
-    const hasGoogleConfig = config.GOOGLE_CLIENT_ID && !config.GOOGLE_CLIENT_ID.includes("PASTE_");
-    const hasGasConfig = config.GAS_WEB_APP_URL && !config.GAS_WEB_APP_URL.includes("PASTE_");
-    const jumpButtons = Array.from(document.querySelectorAll("[data-jump]"));
-    const navButtons = Array.from(document.querySelectorAll(".nav-btn, .bottom-tab"));
-    const completeBtn = document.getElementById("completeBtn");
-    const coachCard = document.getElementById("coachCard");
-    const energyFill = document.getElementById("energyFill");
-    const energyMini = document.getElementById("energyMini");
-    const energyCount = document.getElementById("energyCount");
-    const xpCount = document.getElementById("xpCount");
-    const checkinCount = document.getElementById("checkinCount");
-    const missionMap = document.getElementById("missionMap");
-    let todayMapNode = null;
-    let todayMapState = null;
-    const historyState = document.getElementById("historyState");
-    const historyTag = document.getElementById("historyTag");
-    const toast = document.getElementById("toast");
-    const authTitle = document.getElementById("authTitle");
-    const authSub = document.getElementById("authSub");
-    const syncDot = document.getElementById("syncDot");
-    const googleSignIn = document.getElementById("googleSignIn");
-    const signOutBtn = document.getElementById("signOutBtn");
-    const syncBtn = document.getElementById("syncBtn");
-    const uploadCard = document.getElementById("uploadCard");
+    const programStart = new Date(2026, 6, 8);
+    const totalDays = 365;
+    const storageKey = "dailyMissionCalendarState";
+
+    const monthlyWishes = [
+      { name: "補水挑戰", wish: "讓身體醒過來", badge: "補水徽章" },
+      { name: "睡眠挑戰", wish: "建立穩定作息", badge: "好眠徽章" },
+      { name: "整理挑戰", wish: "讓空間變清楚", badge: "整理徽章" },
+      { name: "感謝挑戰", wish: "練習看見別人的好", badge: "感謝徽章" },
+      { name: "觀察挑戰", wish: "拍下生活中的自然現象", badge: "觀察徽章" },
+      { name: "閱讀挑戰", wish: "每天讀一小段", badge: "閱讀徽章" },
+      { name: "提問挑戰", wish: "每天問 AI 一個好問題", badge: "提問徽章" },
+      { name: "運動挑戰", wish: "讓身體動起來", badge: "運動徽章" },
+      { name: "情緒挑戰", wish: "記錄今天的心情", badge: "情緒徽章" },
+      { name: "專注挑戰", wish: "完成一段不被打斷的時間", badge: "專注徽章" },
+      { name: "幫助挑戰", wish: "做一件對別人有幫助的小事", badge: "幫助徽章" },
+      { name: "回顧挑戰", wish: "整理一年的自己", badge: "回顧徽章" }
+    ];
+
+    const taskTemplates = [
+      {
+        title: "喝一杯水，拍下你的杯子",
+        steps: ["倒一杯水", "慢慢喝完", "拍下杯子或水壺"],
+        prompt: "今天喝完水後，身體有什麼變化？請描述精神、口渴感、專注力、心情，或身體感覺。"
+      },
+      {
+        title: "整理桌面 3 分鐘",
+        steps: ["設定 3 分鐘", "只整理一小塊", "拍下整理後的桌面"],
+        prompt: "整理後，你的心情或專注感有什麼不同？請描述整理前後的差別。"
+      },
+      {
+        title: "對一個人說謝謝",
+        steps: ["想一個想感謝的人", "說出一句謝謝", "記錄你說完後的感覺"],
+        prompt: "你今天謝謝了誰？對方有什麼反應？你自己的心情有什麼變化？"
+      },
+      {
+        title: "觀察一個自然現象",
+        steps: ["走到窗邊或戶外", "找一個自然現象", "拍下你觀察到的畫面"],
+        prompt: "你觀察到了什麼？它讓你想到哪一個自然課概念或生活問題？"
+      },
+      {
+        title: "問 AI 一個好問題",
+        steps: ["想一件想知道的事", "把問題寫完整", "拍下或記下你的問題"],
+        prompt: "你今天問了什麼問題？你覺得這個問題好在哪裡？還能怎麼問得更清楚？"
+      },
+      {
+        title: "走路 5 分鐘",
+        steps: ["離開座位", "走路 5 分鐘", "拍下路上的一個細節"],
+        prompt: "走完 5 分鐘後，身體或心情有什麼變化？請寫出一個具體感覺。"
+      },
+      {
+        title: "讀一小段文字",
+        steps: ["選一小段文字", "讀完它", "拍下或寫下一個關鍵字"],
+        prompt: "這段文字中哪一句讓你有感覺？它跟你的生活有什麼關係？"
+      }
+    ];
+
+    const calendarGrid = document.getElementById("calendarGrid");
+    const monthTitle = document.getElementById("monthTitle");
+    const monthSubtitle = document.getElementById("monthSubtitle");
+    const monthBadge = document.getElementById("monthBadge");
+    const wishMonth = document.getElementById("wishMonth");
+    const wishTitle = document.getElementById("wishTitle");
+    const monthDoneCount = document.getElementById("monthDoneCount");
+    const streakCount = document.getElementById("streakCount");
+    const badgeRemain = document.getElementById("badgeRemain");
+    const wishProgress = document.getElementById("wishProgress");
+    const heroDayLabel = document.getElementById("heroDayLabel");
+    const missionTitle = document.getElementById("missionTitle");
+    const missionSteps = document.getElementById("missionSteps");
+    const dayBadge = document.getElementById("dayBadge");
     const photoInput = document.getElementById("photoInput");
+    const proofCard = document.getElementById("proofCard");
     const photoPreview = document.getElementById("photoPreview");
     const photoTitle = document.getElementById("photoTitle");
     const photoHint = document.getElementById("photoHint");
-    const gasPostForm = document.getElementById("gasPostForm");
-    const gasAction = document.getElementById("gasAction");
-    const gasCredential = document.getElementById("gasCredential");
-    const gasPayload = document.getElementById("gasPayload");
-    let googleCredential = window.sessionStorage.getItem("dailyMissionCredential") || "";
-    let currentUser = readStoredUser();
-    let selectedPhoto = null;
+    const completeBtn = document.getElementById("completeBtn");
+    const advancedJumpBtn = document.getElementById("advancedJumpBtn");
+    const advancedPanel = document.getElementById("advancedPanel");
+    const advancedPrompt = document.getElementById("advancedPrompt");
+    const reflectionInput = document.getElementById("reflectionInput");
+    const reflectionScore = document.getElementById("reflectionScore");
+    const reflectionHint = document.getElementById("reflectionHint");
+    const journeyList = document.getElementById("journeyList");
+    const toast = document.getElementById("toast");
 
-    const missionSeeds = [
-      ["寫下一件今天做得到的小事", 15],
-      ["整理桌面 3 分鐘", 18],
-      ["對一個人說謝謝", 15],
-      ["喝一杯水，拍下你的杯子", 20],
-      ["問 AI 一個好問題", 20],
-      ["走到戶外觀察一個自然現象", 22],
-      ["把今天最卡的一件事寫成一句話", 18],
-      ["做 10 次深呼吸並記錄感覺", 16],
-      ["讀一小段文字，圈出一個關鍵字", 20],
-      ["幫家裡或班上一個小忙", 18],
-      ["拍下一個讓你覺得有秩序的畫面", 22],
-      ["把一個大目標拆成下一個小動作", 24]
-    ];
-
-    function missionForDay(day) {
-      const seed = missionSeeds[(day - 1) % missionSeeds.length];
-      const stage = Math.floor((day - 1) / 30) + 1;
+    const missions = Array.from({ length: totalDays }, (_, index) => {
+      const template = taskTemplates[index % taskTemplates.length];
+      const date = new Date(programStart);
+      date.setDate(programStart.getDate() + index);
       return {
-        title: seed[0],
-        reward: seed[1] + Math.min(stage - 1, 6),
-        stage
+        day: index + 1,
+        date,
+        monthIndex: Math.min(11, Math.floor(index / 31)),
+        title: template.title,
+        steps: template.steps,
+        prompt: template.prompt,
+        points: 20 + Math.floor(index / 30)
       };
-    }
+    });
 
-    function renderMissionMap() {
-      const fragment = document.createDocumentFragment();
-      for (let day = 1; day <= 365; day += 1) {
-        const mission = missionForDay(day);
-        const item = document.createElement("article");
-        item.className = "map-day";
-        item.dataset.day = String(day);
-        if (day < 8) item.classList.add("done");
-        if (day === 8) item.classList.add("today");
+    let state = readState();
+    let selectedDay = state.selectedDay || 1;
+    let visibleMonth = new Date(missions[selectedDay - 1].date.getFullYear(), missions[selectedDay - 1].date.getMonth(), 1);
+    let selectedPhotoUrl = "";
 
-        const stateText = day < 8 ? "已收入歷程" : day === 8 ? "等待完成" : `第 ${mission.stage} 階段，尚未解鎖`;
-        item.innerHTML = `
-          <div class="day-node">D${String(day).padStart(3, "0")}</div>
-          <div class="day-info"><strong>${mission.title}</strong><span>${stateText}</span></div>
-          <div class="day-reward">+${mission.reward}</div>
-        `;
-        fragment.appendChild(item);
-        if (day === 8) {
-          todayMapNode = item;
-          todayMapState = item.querySelector(".day-info span");
-        }
-      }
-      missionMap.appendChild(fragment);
-      if (todayMapNode) {
-        missionMap.scrollTop = Math.max(0, todayMapNode.offsetTop - missionMap.clientHeight / 2);
-      }
-    }
-
-    function readStoredUser() {
+    function readState() {
       try {
-        return JSON.parse(window.localStorage.getItem("dailyMissionUser") || "null");
+        return JSON.parse(localStorage.getItem(storageKey) || '{"completed":{},"reflections":{},"selectedDay":1}');
       } catch (error) {
-        return null;
+        return { completed: {}, reflections: {}, selectedDay: 1 };
       }
     }
 
-    function decodeJwtPayload(token) {
-      const payload = token.split(".")[1] || "";
-      const normalizedBase = payload.replace(/-/g, "+").replace(/_/g, "/");
-      const normalized = normalizedBase + "=".repeat((4 - normalizedBase.length % 4) % 4);
-      const json = decodeURIComponent(
-        atob(normalized).split("").map((char) => {
-          return "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2);
-        }).join("")
-      );
-      return JSON.parse(json);
+    function saveState() {
+      localStorage.setItem(storageKey, JSON.stringify(state));
     }
 
-    function setActive(target) {
-      navButtons.forEach((button) => {
-        button.classList.toggle("is-active", button.dataset.jump === target);
-      });
+    function dateKey(date) {
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    }
+
+    function missionByDate(date) {
+      return missions.find((mission) => dateKey(mission.date) === dateKey(date));
+    }
+
+    function wishForMission(mission) {
+      return monthlyWishes[mission.monthIndex] || monthlyWishes[monthlyWishes.length - 1];
     }
 
     function showToast(message) {
       toast.textContent = message;
       toast.classList.add("is-visible");
-      window.clearTimeout(showToast.timer);
-      showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 1900);
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("is-visible"), 1800);
     }
 
-    function updateAuthUi() {
-      if (!hasGoogleConfig || !hasGasConfig) {
-        syncDot.classList.remove("is-ready");
-        authTitle.textContent = "前端試用模式";
-        authSub.textContent = "目前先測前端：365 天任務、拍照選圖、打卡回饋都可操作；部署與 Google 登入之後再接。";
-        return;
+    function renderCalendar() {
+      calendarGrid.innerHTML = "";
+      const year = visibleMonth.getFullYear();
+      const month = visibleMonth.getMonth();
+      const first = new Date(year, month, 1);
+      const startOffset = first.getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const selectedMission = missions[selectedDay - 1];
+      const visibleMission = missionByDate(first) || missions.find((mission) => mission.date.getMonth() === month) || selectedMission;
+      const wish = wishForMission(visibleMission);
+
+      monthTitle.textContent = `${year} 年 ${month + 1} 月`;
+      monthSubtitle.textContent = wish.name;
+      monthBadge.textContent = wish.badge;
+      wishMonth.textContent = `${month + 1} 月｜${wish.name}`;
+      wishTitle.textContent = wish.wish;
+
+      for (let i = 0; i < startOffset; i += 1) {
+        const empty = document.createElement("button");
+        empty.className = "day-cell";
+        empty.disabled = true;
+        calendarGrid.appendChild(empty);
       }
 
-      if (currentUser && googleCredential) {
-        syncDot.classList.add("is-ready");
-        authTitle.textContent = `${currentUser.name || currentUser.email} 已登入`;
-        authSub.textContent = "完成任務時，資料會寫入站主 Google 帳號底下的 Sheets / Drive。";
-        signOutBtn.hidden = false;
-        return;
-      }
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const date = new Date(year, month, day);
+        const mission = missionByDate(date);
+        const button = document.createElement("button");
+        button.className = "day-cell";
+        button.type = "button";
+        button.innerHTML = `<span>${day}</span>${mission ? `<small>D${String(mission.day).padStart(3, "0")}</small>` : "<small></small>"}`;
 
-      if (currentUser && !googleCredential) {
-        syncDot.classList.remove("is-ready");
-        authTitle.textContent = `${currentUser.name || currentUser.email} 需要重新登入`;
-        authSub.textContent = "為了保護登入憑證，重新打開網站時請再按一次 Google 登入。";
-        signOutBtn.hidden = false;
-        return;
-      }
-
-      syncDot.classList.remove("is-ready");
-      authTitle.textContent = "請用 Google 帳號登入";
-      authSub.textContent = "登入後可打卡、累積積分，後台以 Google ID token 辨識使用者。";
-      signOutBtn.hidden = true;
-    }
-
-    function handleCredentialResponse(response) {
-      googleCredential = response.credential;
-      const profile = decodeJwtPayload(response.credential);
-      currentUser = {
-        sub: profile.sub,
-        email: profile.email,
-        name: profile.name || profile.email,
-        picture: profile.picture || ""
-      };
-      window.sessionStorage.setItem("dailyMissionCredential", googleCredential);
-      window.localStorage.setItem("dailyMissionUser", JSON.stringify(currentUser));
-      updateAuthUi();
-      postToGas("login", { source: "github-pages", signedInAt: new Date().toISOString() });
-      loadPublicStats();
-      showToast("已用 Google 帳號登入，可以開始打卡");
-    }
-
-    window.handleCredentialResponse = handleCredentialResponse;
-
-    function initGoogleSignIn(attempt = 0) {
-      updateAuthUi();
-      if (!hasGoogleConfig) return;
-      if (!window.google || !google.accounts || !google.accounts.id) {
-        if (attempt < 20) window.setTimeout(() => initGoogleSignIn(attempt + 1), 200);
-        return;
-      }
-      if (googleSignIn.dataset.rendered === "true") return;
-      google.accounts.id.initialize({
-        client_id: config.GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse,
-        auto_select: false
-      });
-      google.accounts.id.renderButton(googleSignIn, {
-        type: "standard",
-        theme: "outline",
-        size: "large",
-        text: "signin_with",
-        shape: "pill",
-        locale: "zh_TW"
-      });
-      googleSignIn.dataset.rendered = "true";
-    }
-
-    function postToGas(action, payload) {
-      if (!hasGasConfig) return false;
-      if (!googleCredential) {
-        showToast("請先用 Google 帳號登入");
-        return false;
-      }
-      gasPostForm.action = config.GAS_WEB_APP_URL;
-      gasAction.value = action;
-      gasCredential.value = googleCredential;
-      gasPayload.value = JSON.stringify(payload);
-      gasPostForm.submit();
-      return true;
-    }
-
-    function loadPublicStats() {
-      if (!hasGasConfig) return;
-      const callbackName = "dailyMissionStats_" + Date.now();
-      window[callbackName] = (data) => {
-        if (data && data.ok && data.stats) {
-          checkinCount.textContent = data.stats.todayCheckins || checkinCount.textContent;
-          if (data.stats.totalPoints) xpCount.textContent = data.stats.totalPoints;
+        if (!mission) {
+          button.disabled = true;
+        } else {
+          if (state.completed[mission.day]) button.classList.add("is-complete");
+          if (mission.day === selectedDay) button.classList.add("is-selected");
+          if (mission.day === 1) button.classList.add("is-today");
+          button.addEventListener("click", () => selectDay(mission.day));
         }
-        delete window[callbackName];
-        script.remove();
-      };
-      const script = document.createElement("script");
-      const url = new URL(config.GAS_WEB_APP_URL);
-      url.searchParams.set("action", "stats");
-      url.searchParams.set("callback", callbackName);
-      script.src = url.toString();
-      script.onerror = () => {
-        delete window[callbackName];
-        script.remove();
-      };
-      document.body.appendChild(script);
-    }
-
-    jumpButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const id = button.dataset.jump;
-        const target = document.getElementById(id);
-        if (!target) return;
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-        setActive(id);
-      });
-    });
-
-    function resizePhoto(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const image = new Image();
-          image.onload = () => {
-            const maxSide = 1280;
-            const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
-            const canvas = document.createElement("canvas");
-            canvas.width = Math.round(image.width * scale);
-            canvas.height = Math.round(image.height * scale);
-            const context = canvas.getContext("2d");
-            context.drawImage(image, 0, 0, canvas.width, canvas.height);
-            const dataUrl = canvas.toDataURL("image/jpeg", .76);
-            resolve({
-              photoBase64: dataUrl.split(",")[1],
-              photoMimeType: "image/jpeg",
-              photoName: file.name
-            });
-          };
-          image.onerror = reject;
-          image.src = reader.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    photoInput.addEventListener("change", async () => {
-      const file = photoInput.files && photoInput.files[0];
-      if (!file) return;
-      try {
-        photoHint.textContent = "正在整理照片...";
-        selectedPhoto = await resizePhoto(file);
-        photoPreview.src = URL.createObjectURL(file);
-        uploadCard.classList.add("has-photo");
-        photoTitle.textContent = "照片已加入";
-        photoHint.textContent = file.name;
-        showToast("照片已準備好，可以送出打卡");
-      } catch (error) {
-        selectedPhoto = null;
-        photoHint.textContent = "照片處理失敗，請換一張再試。";
-        showToast("照片處理失敗");
+        calendarGrid.appendChild(button);
       }
-    });
 
-    completeBtn.addEventListener("click", () => {
-      if (!selectedPhoto) {
-        showToast("請先加入一張完成照片");
+      updateWishStats();
+    }
+
+    function selectDay(day) {
+      selectedDay = day;
+      state.selectedDay = day;
+      saveState();
+      const mission = missions[day - 1];
+      visibleMonth = new Date(mission.date.getFullYear(), mission.date.getMonth(), 1);
+      selectedPhotoUrl = "";
+      photoInput.value = "";
+      proofCard.classList.remove("has-photo");
+      photoPreview.removeAttribute("src");
+      photoTitle.textContent = "拍下完成證明";
+      photoHint.textContent = "手機可拍照，電腦可選圖片。";
+      renderMission();
+      renderCalendar();
+    }
+
+    function renderMission() {
+      const mission = missions[selectedDay - 1];
+      heroDayLabel.textContent = `Day ${mission.day} / 365`;
+      missionTitle.textContent = mission.title;
+      dayBadge.textContent = `D${String(mission.day).padStart(3, "0")}`;
+      advancedPrompt.textContent = mission.prompt;
+      missionSteps.innerHTML = mission.steps.map((step, index) => `<li><b>${index + 1}</b>${step}</li>`).join("");
+      completeBtn.textContent = state.completed[mission.day] ? "已完成" : "完成任務";
+      advancedPanel.classList.toggle("is-visible", Boolean(state.completed[mission.day]));
+      reflectionInput.value = state.reflections[mission.day] || "";
+      updateReflectionScore();
+      renderJourney();
+    }
+
+    function updateWishStats() {
+      const visibleMonthNumber = visibleMonth.getMonth();
+      const visibleYear = visibleMonth.getFullYear();
+      const monthMissions = missions.filter((mission) => mission.date.getMonth() === visibleMonthNumber && mission.date.getFullYear() === visibleYear);
+      const done = monthMissions.filter((mission) => state.completed[mission.day]).length;
+      const streak = calculateStreak();
+      const remain = Math.max(0, 21 - done);
+      monthDoneCount.textContent = done;
+      streakCount.textContent = streak;
+      badgeRemain.textContent = remain;
+      wishProgress.style.width = `${Math.min(100, Math.round((done / 21) * 100))}%`;
+    }
+
+    function calculateStreak() {
+      let streak = 0;
+      for (let day = selectedDay; day >= 1; day -= 1) {
+        if (!state.completed[day]) break;
+        streak += 1;
+      }
+      return streak;
+    }
+
+    function completeMission() {
+      if (!selectedPhotoUrl) {
+        showToast("請先拍下完成證明");
         photoInput.click();
         return;
       }
 
-      const submitted = postToGas("checkin", {
-        missionId: "day-008-water-photo",
-        missionTitle: "喝一杯水，拍下你的杯子",
-        reflection: document.getElementById("reflection").value,
-        score: 92,
-        energyAwarded: 20,
-        pointsAwarded: 30,
-        completedAt: new Date().toISOString(),
-        ...(selectedPhoto || {})
+      state.completed[selectedDay] = true;
+      saveState();
+      completeBtn.textContent = "已完成";
+      advancedPanel.classList.add("is-visible");
+      renderCalendar();
+      renderJourney();
+      showToast("已完成，進階挑戰已解鎖");
+      advancedPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function updateReflectionScore() {
+      const text = reflectionInput.value.trim();
+      const concreteWords = ["精神", "口渴", "專注", "心情", "身體", "時間", "早上", "下午", "晚上", "感覺", "變化"];
+      let score = 0;
+      if (text.length >= 20) score += 35;
+      if (text.length >= 60) score += 25;
+      if (concreteWords.some((word) => text.includes(word))) score += 25;
+      if (state.completed[selectedDay]) score += 15;
+      score = Math.min(100, score);
+
+      reflectionScore.textContent = `目前 ${score} 分`;
+      if (text.length < 20) {
+        reflectionHint.textContent = "再多寫一點，這會成為你的成長書素材。";
+      } else if (score < 70) {
+        reflectionHint.textContent = "可以再加上身體、心情、時間或情境，分數會更高。";
+      } else {
+        reflectionHint.textContent = "這段感受很具體，適合放進未來的成長書。";
+      }
+      state.reflections[selectedDay] = text;
+      saveState();
+    }
+
+    function renderJourney() {
+      const completed = missions.filter((mission) => state.completed[mission.day]).slice(-4).reverse();
+      const items = completed.length ? completed : missions.slice(0, 3);
+      journeyList.innerHTML = items.map((mission) => {
+        const complete = state.completed[mission.day];
+        return `
+          <article class="journey-item">
+            <div class="journey-dot">D${String(mission.day).padStart(3, "0")}</div>
+            <div><strong>${mission.title}</strong><span>${complete ? "已完成，等待整理成作品" : "即將開始"}</span></div>
+            <span class="pill ${complete ? "green" : "blue"}">${complete ? "完成" : "預覽"}</span>
+          </article>
+        `;
+      }).join("");
+    }
+
+    photoInput.addEventListener("change", () => {
+      const file = photoInput.files && photoInput.files[0];
+      if (!file) return;
+      selectedPhotoUrl = URL.createObjectURL(file);
+      photoPreview.src = selectedPhotoUrl;
+      proofCard.classList.add("has-photo");
+      photoTitle.textContent = "照片已加入";
+      photoHint.textContent = file.name;
+      showToast("照片已準備好");
+    });
+
+    completeBtn.addEventListener("click", completeMission);
+    advancedJumpBtn.addEventListener("click", () => {
+      if (!state.completed[selectedDay]) {
+        showToast("先完成基礎任務");
+        return;
+      }
+      advancedPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+    reflectionInput.addEventListener("input", updateReflectionScore);
+
+    document.getElementById("prevMonth").addEventListener("click", () => {
+      visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1);
+      renderCalendar();
+    });
+
+    document.getElementById("nextMonth").addEventListener("click", () => {
+      visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1);
+      renderCalendar();
+    });
+
+    document.getElementById("googleLoginBtn").addEventListener("click", () => {
+      showToast("正式版會在這裡連接 Google 帳號");
+    });
+
+    document.querySelectorAll("[data-jump]").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".bottom-nav button").forEach((item) => item.classList.remove("is-active"));
+        button.classList.add("is-active");
+        document.getElementById(button.dataset.jump).scrollIntoView({ behavior: "smooth", block: "start" });
       });
-      coachCard.classList.add("is-visible");
-      completeBtn.textContent = "今日已完成";
-      completeBtn.disabled = true;
-      energyFill.style.width = "84%";
-      energyMini.textContent = "84";
-      energyCount.textContent = "84";
-      xpCount.textContent = "192";
-      checkinCount.textContent = "240";
-      if (todayMapNode) todayMapNode.classList.add("done");
-      if (todayMapState) todayMapState.textContent = "已完成，明天解鎖 D009";
-      historyState.textContent = "已完成今日打卡，AI 回饋 92 分";
-      historyTag.textContent = "完成";
-      showToast(submitted ? "已完成今日冒險，資料已送往 GAS 後台" : "已完成本機示範；接上 GAS 後會同步保存");
-      coachCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
 
-    signOutBtn.addEventListener("click", () => {
-      googleCredential = "";
-      currentUser = null;
-      window.sessionStorage.removeItem("dailyMissionCredential");
-      window.localStorage.removeItem("dailyMissionUser");
-      updateAuthUi();
-      showToast("已登出這台裝置");
-    });
-
-    syncBtn.addEventListener("click", () => {
-      loadPublicStats();
-      showToast(hasGasConfig ? "正在讀取 GAS 公開統計" : "尚未填入 GAS Web App URL");
-    });
-
-    window.addEventListener("load", () => {
-      renderMissionMap();
-      initGoogleSignIn();
-      loadPublicStats();
-    });
+    renderMission();
+    renderCalendar();
   </script>
 </body>
 </html>
